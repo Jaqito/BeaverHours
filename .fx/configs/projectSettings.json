@@ -1,0 +1,27 @@
+{
+    "appName": "BeaverHours",
+    "projectId": "ed694001-c51c-4bcd-8637-23a1c22520fb",
+    "solutionSettings": {
+        "name": "fx-solution-azure",
+        "version": "1.0.0",
+        "hostType": "Azure",
+        "azureResources": [],
+        "capabilities": [
+            "Tab",
+            "Bot",
+            "MessagingExtension"
+        ],
+        "activeResourcePlugins": [
+            "fx-resource-frontend-hosting",
+            "fx-resource-identity",
+            "fx-resource-bot",
+            "fx-resource-aad-app-for-teams",
+            "fx-resource-local-debug",
+            "fx-resource-appstudio",
+            "fx-resource-simple-auth"
+        ]
+    },
+    "version": "2.0.0",
+    "isFromSample": false,
+    "programmingLanguage": "typescript"
+}
