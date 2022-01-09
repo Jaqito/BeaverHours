@@ -1,0 +1,6 @@
+# Local development settings
+localSettings.json
+.env.teamsfx.local
+
+# Build packages
+build/
