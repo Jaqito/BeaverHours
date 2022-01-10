@@ -1,5 +1,8 @@
 import { useData } from "./useData";
-import { TeamsUserCredential, createMicrosoftGraphClient } from "@microsoft/teamsfx";
+import {
+  TeamsUserCredential,
+  createMicrosoftGraphClient,
+} from "@microsoft/teamsfx";
 import { Client, GraphError } from "@microsoft/microsoft-graph-client";
 
 export function useGraph<T>(

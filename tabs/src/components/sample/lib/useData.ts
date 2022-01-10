@@ -24,7 +24,10 @@ const createReducer =
     }
   };
 
-export function useData<T>(asyncFn: () => Promise<T>, options?: { auto: boolean }) {
+export function useData<T>(
+  asyncFn: () => Promise<T>,
+  options?: { auto: boolean }
+) {
   const { auto } = { auto: true, ...options };
   const [{ data, loading, error }, dispatch] = useReducer(createReducer<T>(), {
     loading: !!auto,

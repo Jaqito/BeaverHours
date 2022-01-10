@@ -11,7 +11,10 @@ import { useData } from "./lib/useData";
 import { Deploy } from "./Deploy";
 import { Publish } from "./Publish";
 
-export function Welcome(props: { showFunction?: boolean; environment?: string }) {
+export function Welcome(props: {
+  showFunction?: boolean;
+  environment?: string;
+}) {
   const { showFunction, environment } = {
     showFunction: true,
     environment: window.location.hostname === "localhost" ? "local" : "azure",
@@ -48,8 +51,12 @@ export function Welcome(props: { showFunction?: boolean; environment?: string })
     <div className="welcome page">
       <div className="narrow page-padding">
         <Image src="hello.png" />
-        <h1 className="center">Congratulations{userName ? ", " + userName : ""}!</h1>
-        <p className="center">Your app is running in your {friendlyEnvironmentName}</p>
+        <h1 className="center">
+          Congratulations{userName ? ", " + userName : ""}!
+        </h1>
+        <p className="center">
+          Your app is running in your {friendlyEnvironmentName}
+        </p>
         <Menu defaultActiveIndex={0} items={items} underlined secondary />
         <div className="sections">
           {selectedMenuItem === "local" && (

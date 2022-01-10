@@ -1,4 +1,10 @@
-import { loadConfiguration, ResourceType, LogLevel, setLogLevel, setLogFunction } from "@microsoft/teamsfx";
+import {
+  loadConfiguration,
+  ResourceType,
+  LogLevel,
+  setLogLevel,
+  setLogFunction,
+} from "@microsoft/teamsfx";
 import { useData } from "./useData";
 import { useTeams } from "msteams-react-base-component";
 
@@ -16,7 +22,9 @@ export function useTeamsFx() {
     if (!initialized) {
       if (process.env.NODE_ENV === "development") {
         setLogLevel(LogLevel.Verbose);
-        setLogFunction((leve: LogLevel, message: string) => { console.log(message); });
+        setLogFunction((leve: LogLevel, message: string) => {
+          console.log(message);
+        });
       }
       loadConfiguration({
         authentication: {
