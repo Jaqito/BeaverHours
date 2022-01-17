@@ -1,0 +1,52 @@
+{
+    "solution": {
+        "provisionSucceeded": true,
+        "needCreateResourceGroup": false,
+        "resourceNameSuffix": "5412f2",
+        "resourceGroupName": "BeaverHours-dev-rg",
+        "tenantId": "ce6d05e1-3c5e-4d62-87a8-4c4a2713c113",
+        "subscriptionId": "0f16d84b-3c5e-4cfa-be32-a78c3329897b",
+        "subscriptionName": "Azure for Students",
+        "location": "Central US",
+        "teamsAppTenantId": "ce6d05e1-3c5e-4d62-87a8-4c4a2713c113"
+    },
+    "fx-resource-frontend-hosting": {
+        "domain": "beaverhourdevf1efb6tab.z19.web.core.windows.net",
+        "endpoint": "https://beaverhourdevf1efb6tab.z19.web.core.windows.net",
+        "storageResourceId": "/subscriptions/0f16d84b-3c5e-4cfa-be32-a78c3329897b/resourceGroups/BeaverHours-dev-rg/providers/Microsoft.Storage/storageAccounts/beaverhourdevf1efb6tab"
+    },
+    "fx-resource-identity": {
+        "identityName": "beaverhourdevf1efb6",
+        "identityResourceId": "/subscriptions/0f16d84b-3c5e-4cfa-be32-a78c3329897b/resourceGroups/BeaverHours-dev-rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/beaverhourdevf1efb6",
+        "identityClientId": "0bc57c43-2fb0-4c67-94e8-dc0dd7900c89"
+    },
+    "fx-resource-bot": {
+        "botId": "1f595186-fb97-4f62-b0ee-a662d0cea13d",
+        "objectId": "7c1af96a-6cd0-4cf2-9e08-ad3a375bfbf8",
+        "skuName": "F1",
+        "siteName": "beaverhourdevf1efb6bot",
+        "validDomain": "beaverhourdevf1efb6bot.azurewebsites.net",
+        "appServicePlanName": "beaverhourdevf1efb6bot",
+        "botWebAppResourceId": "/subscriptions/0f16d84b-3c5e-4cfa-be32-a78c3329897b/resourceGroups/BeaverHours-dev-rg/providers/Microsoft.Web/sites/beaverhourdevf1efb6bot",
+        "siteEndpoint": "https://beaverhourdevf1efb6bot.azurewebsites.net",
+        "botPassword": "{{fx-resource-bot.botPassword}}"
+    },
+    "fx-resource-aad-app-for-teams": {
+        "clientId": "4f93d80e-8040-4bff-868c-68971e0dc77b",
+        "objectId": "e6509079-7753-4228-a627-82236eb62633",
+        "oauth2PermissionScopeId": "5c106a89-89b6-4a23-90eb-9f7b48df13e2",
+        "tenantId": "ce6d05e1-3c5e-4d62-87a8-4c4a2713c113",
+        "oauthHost": "https://login.microsoftonline.com",
+        "oauthAuthority": "https://login.microsoftonline.com/ce6d05e1-3c5e-4d62-87a8-4c4a2713c113",
+        "applicationIdUris": "api://beaverhourdevf1efb6tab.z19.web.core.windows.net/botid-1f595186-fb97-4f62-b0ee-a662d0cea13d",
+        "clientSecret": "{{fx-resource-aad-app-for-teams.clientSecret}}"
+    },
+    "fx-resource-appstudio": {
+        "teamsAppId": "e5b53875-ac71-41ef-9934-6e5378810c2e",
+        "teamsAppUpdatedAt": 1642396071628
+    },
+    "fx-resource-simple-auth": {
+        "endpoint": "https://beaverhourdevf1efb6simpleauth.azurewebsites.net",
+        "webAppResourceId": "/subscriptions/0f16d84b-3c5e-4cfa-be32-a78c3329897b/resourceGroups/BeaverHours-dev-rg/providers/Microsoft.Web/sites/beaverhourdevf1efb6simpleAuth"
+    }
+}
