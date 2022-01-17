@@ -10,6 +10,7 @@ import {
 import rawWelcomeCard from "./adaptiveCards/welcome.json";
 import rawLearnCard from "./adaptiveCards/learn.json";
 import { AdaptiveCards } from "@microsoft/adaptivecards-tools";
+import { Queue } from "./utilities/Queue";
 
 export interface DataInterface {
   likeCount: number;
@@ -18,6 +19,7 @@ export interface DataInterface {
 export class TeamsBot extends TeamsActivityHandler {
   // record the likeCount
   likeCountObj: { likeCount: number };
+  activeQueue: Queue;
 
   constructor() {
     super();
@@ -55,6 +57,16 @@ export class TeamsBot extends TeamsActivityHandler {
             attachments: [CardFactory.adaptiveCard(card)],
           });
           break;
+        }
+        case "start office hour": {
+          this.activeQueue = new Queue();
+          await context.sendActivity(
+            `Started new Queue with id ${this.activeQueue.id}, ` +
+              `ownerId ${this.activeQueue.ownerId}, ` +
+              `channelId ${this.activeQueue.channelId}, ` +
+              `and status ${this.activeQueue.status} ` +
+              `at ${this.activeQueue.startTime}`
+          );
         }
         /**
          * case "yourCommand": {

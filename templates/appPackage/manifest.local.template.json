@@ -40,6 +40,10 @@
             {
               "title": "learn",
               "description": "Learn about Adaptive Card and Bot Command"
+            },
+            {
+              "title": "start office hours",
+              "description": "Start a new office hour queue"
             }
           ]
         }
