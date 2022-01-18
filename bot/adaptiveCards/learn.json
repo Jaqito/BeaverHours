@@ -9,7 +9,7 @@
     },
     {
       "type": "TextBlock",
-      "text": "Now you have triggered a command that sends this card! Go to documentations to learn more about Adaptive Card and Commands in Teams Bot. Click on \"I like this\" below if you think this is helpful.",
+      "text": "Now you have triggered a command that sends this card! Go to documentations to learn more about Adaptive Card and Commands in Teams Bot. Click on \"I like this\" below if you think this is helpful. - test to see that this change gets deployed",
       "wrap": true
     },
     {
