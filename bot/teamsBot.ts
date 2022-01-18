@@ -25,6 +25,7 @@ export class TeamsBot extends TeamsActivityHandler {
     super();
 
     this.likeCountObj = { likeCount: 0 };
+    this.activeQueue = null;
 
     this.onMessage(async (context, next) => {
       console.log("Running with Message Activity.");
@@ -41,18 +42,35 @@ export class TeamsBot extends TeamsActivityHandler {
       // Trigger command by IM text
       switch (txt) {
         case "start office hour": {
-          this.activeQueue = new Queue({
-            ownerId: context.activity.from.id,
-            channelId: context.activity.channelId,
-          });
-          await context.sendActivity(
-            "<b>Started new Queue<b>\n\n" +
-              `<b>id</b>        ${this.activeQueue.properties.id}\n\n` +
-              `<b>ownerId</b>   ${this.activeQueue.properties.ownerId}\n\n` +
-              `<b>channelId</b> ${this.activeQueue.properties.channelId}\n\n` +
-              `<b>status</b>    ${this.activeQueue.properties.status}\n\n` +
-              `<b>at</b>        ${this.activeQueue.properties.startTime}`
-          );
+          if (this.activeQueue) {
+            await context.sendActivity(
+              'Office hour already in progress. End active office hour with the command "end office hour"'
+            );
+          } else {
+            this.activeQueue = new Queue({
+              ownerId: context.activity.from.id,
+              channelId: context.activity.channelId,
+            });
+            await context.sendActivity(
+              "<b>Started new Queue<b>\n\n" +
+                `<b>id</b>        ${this.activeQueue.properties.id}\n\n` +
+                `<b>ownerId</b>   ${this.activeQueue.properties.ownerId}\n\n` +
+                `<b>channelId</b> ${this.activeQueue.properties.channelId}\n\n` +
+                `<b>status</b>    ${this.activeQueue.properties.status}\n\n` +
+                `<b>at</b>        ${this.activeQueue.properties.startTime}`
+            );
+          }
+          break;
+        }
+        case "end office hour": {
+          if (this.activeQueue) {
+            this.activeQueue = null;
+            await context.sendActivity("Office hour successfully ended.");
+          } else {
+            await context.sendActivity(
+              'No office hour currently active. Start an office hour with the command "start office hour"'
+            );
+          }
           break;
         }
       }

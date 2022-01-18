@@ -36,6 +36,10 @@
             {
               "title": "start office hour",
               "description": "Start a new office hour queue"
+            },
+            {
+              "title": "end office hour",
+              "description": "End the active office hour queue"
             }
           ]
         }
