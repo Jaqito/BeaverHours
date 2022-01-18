@@ -32,15 +32,11 @@ interface User {
   id: number;
   fullName: string;
   role: UserRole;
-  createdAt?: Date;
-  updatedAt?: Date;
 }
 
 export class Queue {
   properties: QueueProperties;
   entries: Array<QueueEntry>;
-  createdAt?: Date;
-  updatedAt?: Date;
 
   constructor({
     id = -1,
