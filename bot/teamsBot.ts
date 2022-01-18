@@ -59,13 +59,17 @@ export class TeamsBot extends TeamsActivityHandler {
           break;
         }
         case "start office hour": {
-          this.activeQueue = new Queue();
+          this.activeQueue = new Queue({
+            ownerId: context.activity.from.id,
+            channelId: context.activity.channelId,
+          });
           await context.sendActivity(
-            `Started new Queue with id ${this.activeQueue.id}, ` +
-              `ownerId ${this.activeQueue.ownerId}, ` +
-              `channelId ${this.activeQueue.channelId}, ` +
-              `and status ${this.activeQueue.status} ` +
-              `at ${this.activeQueue.startTime}`
+            "<b>Started new Queue<b>\n\n" +
+              `<b>id</b>        ${this.activeQueue.properties.id}\n\n` +
+              `<b>ownerId</b>   ${this.activeQueue.properties.ownerId}\n\n` +
+              `<b>channelId</b> ${this.activeQueue.properties.channelId}\n\n` +
+              `<b>status</b>    ${this.activeQueue.properties.status}\n\n` +
+              `<b>at</b>        ${this.activeQueue.properties.startTime}`
           );
         }
         /**

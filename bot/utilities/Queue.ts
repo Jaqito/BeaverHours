@@ -10,6 +10,14 @@ enum QueueStatus {
   Cancelled = "CANCELLED",
 }
 
+interface QueueProperties {
+  id?: number;
+  ownerId?: string;
+  channelId?: string;
+  startTime?: Date;
+  status?: QueueStatus;
+}
+
 interface QueueEntry {
   id: number;
   userId: number;
@@ -29,21 +37,19 @@ interface User {
 }
 
 export class Queue {
-  id: number;
-  ownerId: number;
-  channelId: number;
-  startTime: Date;
-  status: QueueStatus;
+  properties: QueueProperties;
   entries: Array<QueueEntry>;
   createdAt?: Date;
   updatedAt?: Date;
 
-  constructor() {
-    this.id = Math.floor(Math.random() * 100000);
-    this.ownerId = Math.floor(Math.random() * 100000);
-    this.channelId = Math.floor(Math.random() * 100000);
-    this.startTime = new Date(Date.now());
-    this.status = QueueStatus.Active;
+  constructor({
+    id = -1,
+    ownerId = "-1",
+    channelId = "-1",
+    startTime = new Date(Date.now()),
+    status = QueueStatus.Active,
+  }: QueueProperties) {
+    this.properties = { id, ownerId, channelId, startTime, status };
     this.entries = [];
   }
 }
