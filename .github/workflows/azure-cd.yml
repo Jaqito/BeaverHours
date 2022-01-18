@@ -6,6 +6,7 @@ on:
   push:
     branches:
       - master 
+      - ISSUE-7-ci-cd
 jobs:
   buildAndPublish:
     runs-on: ubuntu-latest
@@ -15,7 +16,7 @@ jobs:
       M365_ACCOUNT_NAME: ${{secrets.M365_ACCOUNT_NAME}}
       M365_ACCOUNT_PASSWORD: ${{secrets.M365_ACCOUNT_PASSWORD}}
       # To specify the env name for multi-env feature.
-      TEAMSFX_ENV_NAME: dev
+      TEAMSFX_ENV_NAME: production
 
     steps:
       # Setup environment.
@@ -26,19 +27,10 @@ jobs:
       - name: Checkout the code
         uses: actions/checkout@v2
         
-      # Build the project.
-      # The way to build the current project depends on how you scaffold it.
-      # Different folder structures require different commands set.
-      # 'npm ci' is used here to install dependencies and it depends on package-lock.json.
-      # If you prefer to use 'npm ci', please make sure to commit package-lock.json first, or just change it to 'npm install'.
+
       - name: Build the project
         run: cd tabs && npm ci && npm run build && cd -
 
-      # Run unit test.
-      # Currently, no opinionated solution for unit test provided during scaffolding, so,
-      # set up any unit test framework you prefer (for example, mocha or jest) and update the commands accordingly in below.
-      - name: Run Unit Test
-        run: cd tabs && npm run test && cd -
 
       - name: Login Azure by service principal 
         uses: OfficeDev/teamsfx-cli-action@v1
@@ -49,29 +41,13 @@ jobs:
           password: ${{secrets.AZURE_SERVICE_PRINCIPAL_PASSWORD}}
           tenant: ${{secrets.AZURE_TENANT_ID}}
 
-      # We suggest to do the `teamsfx provision` step manually or in a separate workflow. The following steps are for your reference.
-      # After provisioning, you should commit necessary files under .fx into the repository.
-      #- name: Provision hosting environment
-      #  uses: OfficeDev/teamsfx-cli-action@v1
-      #  with:
-      #    commands: provision
-      #    subscription: ${{secrets.AZURE_SUBSCRIPTION_ID}}
-      #    env: ${{env.TEAMSFX_ENV_NAME}}
-
-      #- name: Commit provision configs if necessary
-      #  uses: stefanzweifel/git-auto-commit-action@v4
-      #  with:
-      #    commit_message: "chore: commit provision configs"
-      #    file_pattern: .fx/*
-      
+   
       - name: Deploy to hosting environment
         uses: OfficeDev/teamsfx-cli-action@v1
         with:
           commands: deploy
           env: ${{env.TEAMSFX_ENV_NAME}}
 
-      # This step is to pack the Teams App as zip file,
-      # which can be used to be uploaded onto Teams Client for installation.
       - name: Package Teams App for publishing
         uses: OfficeDev/teamsfx-cli-action@v1
         with:
