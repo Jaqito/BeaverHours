@@ -53,6 +53,7 @@ export class TeamsBot extends TeamsActivityHandler {
               `<b>status</b>    ${this.activeQueue.properties.status}\n\n` +
               `<b>at</b>        ${this.activeQueue.properties.startTime}`
           );
+          break;
         }
       }
 
