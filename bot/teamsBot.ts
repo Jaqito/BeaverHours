@@ -40,24 +40,6 @@ export class TeamsBot extends TeamsActivityHandler {
 
       // Trigger command by IM text
       switch (txt) {
-        case "welcome": {
-          const card =
-            AdaptiveCards.declareWithoutData(rawWelcomeCard).render();
-          await context.sendActivity({
-            attachments: [CardFactory.adaptiveCard(card)],
-          });
-          break;
-        }
-        case "learn": {
-          this.likeCountObj.likeCount = 0;
-          const card = AdaptiveCards.declare<DataInterface>(
-            rawLearnCard
-          ).render(this.likeCountObj);
-          await context.sendActivity({
-            attachments: [CardFactory.adaptiveCard(card)],
-          });
-          break;
-        }
         case "start office hour": {
           this.activeQueue = new Queue({
             ownerId: context.activity.from.id,
@@ -72,12 +54,6 @@ export class TeamsBot extends TeamsActivityHandler {
               `<b>at</b>        ${this.activeQueue.properties.startTime}`
           );
         }
-        /**
-         * case "yourCommand": {
-         *   await context.sendActivity(`Add your response here!`);
-         *   break;
-         * }
-         */
       }
 
       // By calling next() you ensure that the next BotHandler is run.
