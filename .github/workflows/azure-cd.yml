@@ -6,7 +6,6 @@ on:
   push:
     branches:
       - master
-      - ISSUE-7-ci-cd
 jobs:
   buildAndPublish:
     runs-on: ubuntu-latest
