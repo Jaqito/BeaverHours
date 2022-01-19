@@ -6,6 +6,7 @@ on:
   push:
     branches:
       - master
+      - ISSUE-7-ci-cd
   pull_request:
 
 jobs:
