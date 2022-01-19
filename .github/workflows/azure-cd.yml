@@ -1,0 +1,63 @@
+# This is just an example workflow for continuous deployment.
+# You should customize it to meet your own requirements.
+name: "Continuous Deployment"
+on:
+  # When new commits are pushed onto the main branch.
+  push:
+    branches:
+      - master
+jobs:
+  buildAndPublish:
+    runs-on: ubuntu-latest
+    # You can uncomment the line below to use environments (refer to https://docs.github.com/en/actions/reference/environments).
+    #environment: test_environment
+    env:
+      M365_ACCOUNT_NAME: ${{secrets.M365_ACCOUNT_NAME}}
+      M365_ACCOUNT_PASSWORD: ${{secrets.M365_ACCOUNT_PASSWORD}}
+      # To specify the env name for multi-env feature.
+      TEAMSFX_ENV_NAME: dev
+
+    steps:
+      # Setup environment.
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "14"
+
+      - name: Checkout the code
+        uses: actions/checkout@v2
+
+      - name: Build the project
+        run: cd tabs && npm ci && npm run build && cd -
+
+      - name: Login Azure by service principal
+        uses: OfficeDev/teamsfx-cli-action@v1
+        with:
+          commands: account login azure
+          service-principal: true
+          username: ${{secrets.AZURE_SERVICE_PRINCIPAL_NAME}}
+          password: ${{secrets.AZURE_SERVICE_PRINCIPAL_PASSWORD}}
+          tenant: ${{secrets.AZURE_TENANT_ID}}
+
+      - name: Deploy to hosting environment
+        uses: OfficeDev/teamsfx-cli-action@v1
+        with:
+          commands: deploy
+          env: ${{env.TEAMSFX_ENV_NAME}}
+
+      - name: Package Teams App for publishing
+        uses: OfficeDev/teamsfx-cli-action@v1
+        with:
+          commands: package
+          env: ${{env.TEAMSFX_ENV_NAME}}
+
+      - name: Upload Teams App's package as artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: appPackage
+          path: build/appPackage/appPackage.${{env.TEAMSFX_ENV_NAME}}.zip
+
+      - name: Publish Teams App
+        uses: OfficeDev/teamsfx-cli-action@v1
+        with:
+          commands: publish
+          env: ${{env.TEAMSFX_ENV_NAME}}
