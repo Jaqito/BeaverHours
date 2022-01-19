@@ -1,3 +1,5 @@
+import { ChannelAccount, TurnContext } from "botbuilder";
+
 enum UserRole {
   Student = "STUDENT",
   Instructor = "INSTRUCTOR",
@@ -20,7 +22,7 @@ interface QueueProperties {
 
 interface QueueEntry {
   id: number;
-  userId: number;
+  userId: string;
   queueId: number;
   question: string;
   resolved: boolean;
@@ -47,5 +49,46 @@ export class Queue {
   }: QueueProperties) {
     this.properties = { id, ownerId, channelId, startTime, status };
     this.entries = [];
+  }
+
+  get length(): number {
+    return this.entries.length;
+  }
+  
+  checkQueue(context: TurnContext): boolean {
+    if (this.entries.find((student) => student.userId == context.activity.from.id) != undefined) {
+      return true;
+    }
+    return false;
+  }
+
+  enqueueStudent(context: TurnContext): void {
+    const studentToAdd: QueueEntry = {
+      id: Math.random() * 1000,
+      userId: context.activity.from.id,
+      queueId: this.properties.id,
+      question: "",
+      resolved: false,
+      createdAt: new Date(Date.now()),
+      // leaving updatedAt for post-creation updates only
+    };
+    this.entries.push(studentToAdd);
+  }
+
+  queueToString(): String {
+    var queueString: String = "[";
+    this.entries.forEach(function (student) {
+      if (queueString.length != 1) {
+        queueString += ",";
+      }
+
+      queueString += `{id: ${student.id},
+          userId: ${student.userId},
+          resolved: ${student.resolved}, 
+          createdAt: ${student.createdAt},
+          updatedAt: ${student.updatedAt ?? ""}}`;
+    });
+    queueString += "]";
+    return queueString;
   }
 }
