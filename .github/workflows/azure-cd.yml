@@ -5,7 +5,8 @@ on:
   # When new commits are pushed onto the main branch.
   push:
     branches:
-      - master 
+      - master
+      - ISSUE-7-ci-cd 
 jobs:
   buildAndPublish:
     runs-on: ubuntu-latest
