@@ -76,10 +76,10 @@ export class TeamsBot extends TeamsActivityHandler {
         }
         case "join office hours": {
           if (this.activeQueue) {
-            if (this.activeQueue.checkQueue(context)) {
+            if (this.activeQueue.checkQueue(context.activity.from.id)) {
               context.sendActivity("You are already in queue.");
             } else {
-              this.activeQueue.enqueueStudent(context);
+              this.activeQueue.enqueueStudent(context.activity.from.id);
               await context.sendActivity(
                 `You have entered the office hours queue, the instructor will get to you!\nYou are in position ${this.activeQueue.length}.`
               );

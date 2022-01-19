@@ -1,5 +1,3 @@
-import { ChannelAccount, TurnContext } from "botbuilder";
-
 enum UserRole {
   Student = "STUDENT",
   Instructor = "INSTRUCTOR",
@@ -55,21 +53,19 @@ export class Queue {
     return this.entries.length;
   }
 
-  checkQueue(context: TurnContext): boolean {
+  checkQueue(idToCheck: string): boolean {
     if (
-      this.entries.find(
-        (student) => student.userId == context.activity.from.id
-      ) != undefined
+      this.entries.find((student) => student.userId == idToCheck) != undefined
     ) {
       return true;
     }
     return false;
   }
 
-  enqueueStudent(context: TurnContext): void {
+  enqueueStudent(idToAdd: string): void {
     const studentToAdd: QueueEntry = {
       id: Math.random() * 1000,
-      userId: context.activity.from.id,
+      userId: idToAdd,
       queueId: this.properties.id,
       question: "",
       resolved: false,
