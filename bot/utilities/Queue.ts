@@ -54,9 +54,13 @@ export class Queue {
   get length(): number {
     return this.entries.length;
   }
-  
+
   checkQueue(context: TurnContext): boolean {
-    if (this.entries.find((student) => student.userId == context.activity.from.id) != undefined) {
+    if (
+      this.entries.find(
+        (student) => student.userId == context.activity.from.id
+      ) != undefined
+    ) {
       return true;
     }
     return false;
