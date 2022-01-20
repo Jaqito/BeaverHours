@@ -53,13 +53,19 @@ export class Queue {
     return this.entries.length;
   }
 
+  findStudent(idToFind: string): QueueEntry {
+    return this.entries.find((student) => student.userId == idToFind);
+  }
+
   checkQueue(idToCheck: string): boolean {
-    if (
-      this.entries.find((student) => student.userId == idToCheck) != undefined
-    ) {
+    if (this.findStudent(idToCheck) != undefined) {
       return true;
     }
     return false;
+  }
+
+  getQueuePosition(idToGet: string): number {
+    return this.entries.indexOf(this.findStudent(idToGet));
   }
 
   enqueueStudent(idToAdd: string): void {
@@ -73,6 +79,10 @@ export class Queue {
       // leaving updatedAt for post-creation updates only
     };
     this.entries.push(studentToAdd);
+  }
+
+  dequeueStudent(idToRemove: string): void {
+    this.entries.splice(this.getQueuePosition(idToRemove), 1);
   }
 
   queueToString(): String {

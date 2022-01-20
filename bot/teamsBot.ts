@@ -81,7 +81,10 @@ export class TeamsBot extends TeamsActivityHandler {
             } else {
               this.activeQueue.enqueueStudent(context.activity.from.id);
               await context.sendActivity(
-                `You have entered the office hours queue, the instructor will get to you!\nYou are in position ${this.activeQueue.length}.`
+                `You have entered the office hours queue, the instructor will get to you!\nYou are in position ${
+                  this.activeQueue.getQueuePosition(context.activity.from.id) +
+                  1
+                }.`
               );
               await context.sendActivity(
                 `Current queue: ${this.activeQueue.queueToString()}`
@@ -93,6 +96,24 @@ export class TeamsBot extends TeamsActivityHandler {
             );
           }
           break;
+        }
+        case "leave office hours": {
+          if (this.activeQueue) {
+            if (!this.activeQueue.checkQueue(context.activity.from.id)) {
+              await context.sendActivity(
+                "Unable to remove, you are currently not in a queue."
+              );
+            } else {
+              this.activeQueue.dequeueStudent(context.activity.from.id);
+              await context.sendActivity(
+                `You have successfully been removed from the queue.\n Current queue: ${this.activeQueue.queueToString()}`
+              );
+            }
+          } else {
+            await context.sendActivity(
+              "Currently no office hours being held. Please check the schedule to confirm the next office hours session!"
+            );
+          }
         }
       }
 

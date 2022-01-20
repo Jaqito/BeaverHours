@@ -43,7 +43,11 @@
             },
             {
               "title": "join office hours",
-              "description": "Jump in line to get help from the instructor"
+              "description": "Jump in queue to get help from the instructor"
+            },
+            {
+              "title": "leave office hours",
+              "description": "Leave the office hours queue"
             }
           ]
         }
