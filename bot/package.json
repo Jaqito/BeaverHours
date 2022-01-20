@@ -18,7 +18,9 @@
   "dependencies": {
     "@microsoft/adaptivecards-tools": "^0.1.2",
     "botbuilder": "~4.14.0",
+    "botbuilder-azure": "^4.15.0",
     "botbuilder-dialogs": "~4.14.0",
+    "dotenv": "^14.2.0",
     "isomorphic-fetch": "^3.0.0",
     "restify": "^8.5.1"
   },
