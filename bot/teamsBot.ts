@@ -6,6 +6,7 @@ import {
   TurnContext,
   AdaptiveCardInvokeValue,
   AdaptiveCardInvokeResponse,
+  TeamsInfo,
 } from "botbuilder";
 import rawWelcomeCard from "./adaptiveCards/welcome.json";
 import rawLearnCard from "./adaptiveCards/learn.json";
@@ -69,6 +70,26 @@ export class TeamsBot extends TeamsActivityHandler {
           } else {
             await context.sendActivity(
               'No office hour currently active. Start an office hour with the command "start office hour"'
+            );
+          }
+          break;
+        }
+        case "join office hours": {
+          if (this.activeQueue) {
+            if (this.activeQueue.checkQueue(context.activity.from.id)) {
+              await context.sendActivity("You are already in queue.");
+            } else {
+              this.activeQueue.enqueueStudent(context.activity.from.id);
+              await context.sendActivity(
+                `You have entered the office hours queue, the instructor will get to you!\nYou are in position ${this.activeQueue.length}.`
+              );
+              await context.sendActivity(
+                `Current queue: ${this.activeQueue.queueToString()}`
+              );
+            }
+          } else {
+            await context.sendActivity(
+              "Currently no office hours being held. Please check the schedule to confirm the next office hours session!"
             );
           }
           break;

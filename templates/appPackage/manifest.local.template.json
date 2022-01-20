@@ -40,6 +40,10 @@
             {
               "title": "end office hour",
               "description": "End the active office hour queue"
+            },
+            {
+              "title": "join office hours",
+              "description": "Jump in line to get help from the instructor"
             }
           ]
         }
