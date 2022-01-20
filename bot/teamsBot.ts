@@ -81,7 +81,7 @@ export class TeamsBot extends TeamsActivityHandler {
             } else {
               this.activeQueue.enqueueStudent(context.activity.from.id);
               await context.sendActivity(
-                `You have entered the office hours queue, the instructor will get to you!\nYou are in position ${
+                `You have entered the office hours queue, the instructor will get to you! You are in position ${
                   this.activeQueue.getQueuePosition(context.activity.from.id) +
                   1
                 }.`
@@ -106,7 +106,7 @@ export class TeamsBot extends TeamsActivityHandler {
             } else {
               this.activeQueue.dequeueStudent(context.activity.from.id);
               await context.sendActivity(
-                `You have successfully been removed from the queue.\n Current queue: ${this.activeQueue.queueToString()}`
+                `You have successfully been removed from the queue.<br>Current queue: ${this.activeQueue.queueToString()}`
               );
             }
           } else {
