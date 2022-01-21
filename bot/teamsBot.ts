@@ -11,7 +11,7 @@ import {
 import rawWelcomeCard from './adaptiveCards/welcome.json';
 import rawLearnCard from './adaptiveCards/learn.json';
 import { AdaptiveCards } from '@microsoft/adaptivecards-tools';
-import { Queue } from './utilities/Queue';
+import { Queue, QueueStatus } from './utilities/Queue';
 import { CosmosDbPartitionedStorage } from 'botbuilder-azure';
 
 export interface DataInterface {
@@ -39,7 +39,6 @@ export class TeamsBot extends TeamsActivityHandler {
                 // Remove the line break
                 txt = removedMentionText.toLowerCase().replace(/\n|\r/g, '').trim();
             }
-            await this.writeToStorage(context);
 
             // Trigger command by IM text
             switch (txt) {
@@ -53,6 +52,7 @@ export class TeamsBot extends TeamsActivityHandler {
                             ownerId: context.activity.from.id,
                             channelId: context.activity.channelId,
                         });
+                        this.createOfficeHour(context, this.activeQueue);
                         await context.sendActivity(
                             '<b>Started new Queue<b>\n\n' +
                                 `<b>id</b>        ${this.activeQueue.properties.id}\n\n` +
@@ -66,6 +66,7 @@ export class TeamsBot extends TeamsActivityHandler {
                 }
                 case 'end office hour': {
                     if (this.activeQueue) {
+                        await this.endOfficeHour(context, this.activeQueue);
                         this.activeQueue = null;
                         await context.sendActivity('Office hour successfully ended.');
                     } else {
@@ -76,7 +77,6 @@ export class TeamsBot extends TeamsActivityHandler {
                     break;
                 }
             }
-
             // By calling next() you ensure that the next BotHandler is run.
             await next();
         });
@@ -96,14 +96,33 @@ export class TeamsBot extends TeamsActivityHandler {
         });
     }
 
-    async writeToStorage(context: TurnContext) {
+    async createOfficeHour(context: TurnContext, queue: Queue) {
         try {
-            // Read from the storage.
-            let storeItems = await this.storage.read(['UtteranceLogJS']);
-            storeItems['UtteranceLogJS'] = { UtteranceList: [`${'test'}`], eTag: '*', turnNumber: 1 };
+            let storeItems = await this.storage.read([queue.properties.id]);
+            storeItems[queue.properties.id] = { ...queue, eTag: '*' };
             await this.storage.write(storeItems);
         } catch (err) {
-            await context.sendActivity(`Write failed of UtteranceLogJS: ${err}`);
+            await context.sendActivity(`Write failed of Queue: ${err}`);
+        }
+    }
+
+    async endOfficeHour(context: TurnContext, queue: Queue) {
+        try {
+            let storeItems = await this.storage.read([queue.properties.id]);
+            let officeHour = storeItems[queue.properties.id];
+            if (typeof officeHour != 'undefined') {
+                storeItems[queue.properties.id].properties.status = QueueStatus.Closed;
+                try {
+                    await this.storage.write(storeItems);
+                    console.log('Writing to storage...');
+                } catch (err) {
+                    await context.sendActivity(`Failed to update office office hours in Database`);
+                }
+            } else {
+                throw new Error('Could not find office hour in Database.');
+            }
+        } catch (err) {
+            await context.sendActivity(`Failed to update office hour: ${err}`);
         }
     }
 
