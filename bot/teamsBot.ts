@@ -6,7 +6,6 @@ import {
   TurnContext,
   AdaptiveCardInvokeValue,
   AdaptiveCardInvokeResponse,
-  TeamsInfo,
 } from "botbuilder";
 import rawWelcomeCard from "./adaptiveCards/welcome.json";
 import rawLearnCard from "./adaptiveCards/learn.json";
