@@ -1,3 +1,62 @@
+import path from "path";
+import dotenv from "dotenv";
+if (process.env.NODE_ENV !== "production") {
+  const ENV_FILE = path.join(__dirname, ".env.teamsfx.local");
+  dotenv.config({ path: ENV_FILE });
+}
+
+// DbConnection proof of concept
+import DbConnection from "./utilities/Db";
+(async function TestDbConnection() {
+  const sqlConfig = {
+    user: process.env.SQL_USER_NAME,
+    password: process.env.SQL_PASSWORD,
+    database: process.env.SQL_DATABASE_NAME,
+    server: process.env.SQL_ENDPOINT,
+    pool: {
+      max: 10,
+      min: 0,
+      idleTimeoutMillis: 30000,
+    },
+    options: {
+      encrypt: true, // for azure
+      trustServerCertificate: false, // change to true for local dev / self-signed certs
+    },
+  };
+
+  const db = new DbConnection();
+  await db.connect(sqlConfig);
+
+  // Show initial db
+  console.log("Initial db contents");
+  console.log(await db.select());
+  console.log("\n\n\n");
+
+  console.log("Inserting Jerry");
+  console.log(await db.insert("Jerry"));
+  console.log(await db.select());
+  console.log("\n\n\n");
+
+  // Rename Jerry to Steve
+  console.log("Renaming Jerry to Steve");
+  const dbContents = await db.select();
+  const jerryIndex = dbContents.recordset.find(
+    (record) => record.name == "Jerry"
+  ).id;
+  console.log(await db.update(jerryIndex, "Steve"));
+  console.log(await db.select());
+  console.log("\n\n\n");
+
+  // Delete Steve from db
+  console.log("Deleting Steve");
+  console.log(await db.delete("Steve"));
+  console.log(await db.select());
+  console.log("\n\n\n");
+
+  console.log("Closing db");
+  db.pool.close();
+})();
+
 // Import required packages
 import * as restify from "restify";
 
