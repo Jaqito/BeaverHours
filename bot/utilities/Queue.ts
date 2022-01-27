@@ -1,3 +1,5 @@
+import { TeamsChannelAccount } from "botbuilder";
+
 enum UserRole {
   Student = "STUDENT",
   Instructor = "INSTRUCTOR",
@@ -26,6 +28,7 @@ interface QueueEntry {
   resolved: boolean;
   createdAt?: Date;
   updatedAt?: Date;
+  teamsInfo?: TeamsChannelAccount;
 }
 
 interface User {
@@ -37,8 +40,6 @@ interface User {
 export class Queue {
   properties: QueueProperties;
   entries: Array<QueueEntry>;
-  notificationTimer: NodeJS.Timer;
-  entriesCopy: Array<QueueEntry>;
 
   constructor({
     id = -1,
@@ -49,11 +50,14 @@ export class Queue {
   }: QueueProperties) {
     this.properties = { id, ownerId, channelId, startTime, status };
     this.entries = [];
-    this.entriesCopy = this.entries;
   }
 
   get length(): number {
     return this.entries.length;
+  }
+
+  get members(): Array<QueueEntry> {
+    return this.entries;
   }
 
   findStudent(idToFind: string): QueueEntry {
@@ -71,7 +75,7 @@ export class Queue {
     return this.entries.indexOf(this.findStudent(idToGet));
   }
 
-  enqueueStudent(idToAdd: string): void {
+  enqueueStudent(idToAdd: string, studentInfo: TeamsChannelAccount): void {
     const studentToAdd: QueueEntry = {
       id: Math.random() * 1000,
       userId: idToAdd,
@@ -80,6 +84,7 @@ export class Queue {
       resolved: false,
       createdAt: new Date(Date.now()),
       // leaving updatedAt for post-creation updates only
+      teamsInfo: studentInfo,
     };
     this.entries.push(studentToAdd);
   }
@@ -104,23 +109,4 @@ export class Queue {
     queueString += "]";
     return queueString;
   }
-
-  updateState() {
-    this.entriesCopy = this.entries;
-  }
-
-  sendNotifsToQueue() {
-   if (this.entries != this.entriesCopy) {
-      // for all memebers in queue, message them their position
-      // use of proactive messages can possible achieve this: https://docs.microsoft.com/en-us/microsoftteams/platform/bots/how-to/conversations/send-proactive-messages?tabs=typescript
-   } else {
-       console.log("No queue changes, not sending notifications");
-       this.setNotificationTimeout(60);
-   } 
-  }
-
-  setNotificationTimeout(seconds: number) {
-    this.notificationTimer = setInterval(this.sendNotifsToQueue, seconds);
-  }
-
 }

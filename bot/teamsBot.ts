@@ -4,10 +4,11 @@ import {
   TeamsActivityHandler,
   TeamsInfo,
   CardFactory,
+  ConversationParameters,
   TurnContext,
   AdaptiveCardInvokeValue,
   AdaptiveCardInvokeResponse,
-  MessageFactory
+  MessageFactory,
 } from "botbuilder";
 import rawWelcomeCard from "./adaptiveCards/welcome.json";
 import rawLearnCard from "./adaptiveCards/learn.json";
@@ -22,12 +23,16 @@ export class TeamsBot extends TeamsActivityHandler {
   // record the likeCount
   likeCountObj: { likeCount: number };
   activeQueue: Queue;
+  notificationTimer: NodeJS.Timer;
+  timeToNotify: boolean;
 
   constructor() {
     super();
 
     this.likeCountObj = { likeCount: 0 };
     this.activeQueue = null;
+    this.notificationTimer = null;
+    this.timeToNotify = false;
 
     this.onMessage(async (context, next) => {
       console.log("Running with Message Activity.");
@@ -41,17 +46,9 @@ export class TeamsBot extends TeamsActivityHandler {
         txt = removedMentionText.toLowerCase().replace(/\n|\r/g, "").trim();
       }
 
-        // ---------FIXME: remove after debugging
-        console.log("converstion information:\n", context.activity.conversation);
-
       // Trigger command by IM text
       switch (txt) {
         case "start office hour": {
-            // -------------FIXME: remove after debugging
-            console.log(context.activity.from);
-            const member = await TeamsInfo.getMember(context, context.activity.from.id);
-            console.log("Member Info:", member);
-            
           if (this.activeQueue) {
             await context.sendActivity(
               'Office hour already in progress. End active office hour with the command "end office hour"'
@@ -61,6 +58,8 @@ export class TeamsBot extends TeamsActivityHandler {
               ownerId: context.activity.from.id,
               channelId: context.activity.channelId,
             });
+            this.notificationTimer = setTimeout(() => this.timeToNotify = true, 10000);
+
             await context.sendActivity(
               "<b>Started new Queue<b>\n\n" +
                 `<b>id</b>        ${this.activeQueue.properties.id}\n\n` +
@@ -88,7 +87,7 @@ export class TeamsBot extends TeamsActivityHandler {
             if (this.activeQueue.checkQueue(context.activity.from.id)) {
               await context.sendActivity("You are already in queue.");
             } else {
-              this.activeQueue.enqueueStudent(context.activity.from.id);
+              this.activeQueue.enqueueStudent(context.activity.from.id, await TeamsInfo.getMember(context, context.activity.from.id));
               await context.sendActivity(
                 `You have entered the office hours queue, the instructor will get to you! You are in position ${
                   this.activeQueue.getQueuePosition(context.activity.from.id) +
@@ -126,32 +125,47 @@ export class TeamsBot extends TeamsActivityHandler {
           break;
         }
         case "get queue position": {
-            if (this.activeQueue) {
-                if (!this.activeQueue.checkQueue(context.activity.from.id)) {
-                  await context.sendActivity(
-                    "You are currently not in a queue."
-                  );
-                } else {
-                    const mention = {
-                        mentioned: context.activity.from,
-                        text: `<at>${ new TextEncoder().encode(context.activity.from.name) }</at>`,
-                        type: 'mention'
-                    };
-                    const replyActivity = MessageFactory.text(`Hello ${mention.text}! You are currently in position ${this.activeQueue.getQueuePosition(context.activity.from.id) + 1}.`);
-                    replyActivity.entities = [mention];
-                    await context.sendActivity(replyActivity);
-                }
+          if (this.activeQueue) {
+            if (!this.activeQueue.checkQueue(context.activity.from.id)) {
+              await context.sendActivity("You are currently not in a queue.");
             } else {
-                await context.sendActivity(
-                  "Currently no office hours being held. Please check the schedule to confirm the next office hours session!"
-                );
+              const mention = {
+                mentioned: context.activity.from,
+                text: `<at>${new TextEncoder().encode(
+                  context.activity.from.name
+                )}</at>`,
+                type: "mention",
+              };
+              const replyActivity = MessageFactory.text(
+                `Hello ${mention.text}! You are currently in position ${
+                  this.activeQueue.getQueuePosition(context.activity.from.id) +
+                  1
+                }.`
+              );
+              replyActivity.entities = [mention];
+              await context.sendActivity(replyActivity);
             }
-            break;
+          } else {
+            await context.sendActivity(
+              "Currently no office hours being held. Please check the schedule to confirm the next office hours session!"
+            );
+          }
+          break;
         }
       }
 
       // By calling next() you ensure that the next BotHandler is run.
       await next();
+    });
+
+    this.onTurn(async (context, next) => {
+        console.log(`turn handler triggered. timeToNotify = ${this.timeToNotify}`);
+        if (this.timeToNotify) {
+            await this.messageAllMembersAsync(context, this.activeQueue);
+            this.timeToNotify = false;
+            this.notificationTimer = setTimeout(() => this.timeToNotify = true, 10000);
+        }
+        await next();
     });
 
     this.onMembersAdded(async (context, next) => {
@@ -169,6 +183,70 @@ export class TeamsBot extends TeamsActivityHandler {
       await next();
     });
   }
+
+  public async messageAllMembersAsync( context: TurnContext, queue: Queue ): Promise<void> {
+        // const members = await this.getPagedMembers( context );
+        const queuemembers = queue.members;
+
+        // queuemembers.forEach( async (queuemember) => {
+        //     const memberinfo = await TeamsInfo.getMember(context, queuemember.userId);
+        //     console.log('queuemember info,', memberinfo);
+        // });
+
+        queuemembers.forEach( async ( teamMember ) => {
+            // const memberinfo = await TeamsInfo.getMember(context, teamMember.userId);
+            const memberinfo = teamMember.teamsInfo;
+            console.log( 'a ', memberinfo);
+            const message = MessageFactory.text( `Hello ${ memberinfo.givenName } ${ memberinfo.surname }. I'm a Teams conversation bot.` );
+
+            const convoParams = {
+                members: [memberinfo],
+                tenantId: context.activity.channelData.tenant.id,
+                activity: context.activity
+            } as ConversationParameters;
+            
+            // var ref = TurnContext.getConversationReference(context.activity);
+            // ref.user = memberinfo;
+            // await context.adapter.createConversation(ref,
+            // async (t1) => {
+            //     const ref2 = TurnContext.getConversationReference(t1.activity);
+            //     await t1.adapter.continueConversation(ref2, async (t2) => {
+            //         await t2.sendActivity(message);
+            //     });
+            // });            
+            console.log("calling message sender func");
+            await context.adapter.createConversationAsync (
+                process.env.MicrosoftAppId,
+                context.activity.channelId,
+                context.activity.serviceUrl,
+                null,
+                convoParams,
+                async (context) => {
+                    const ref = TurnContext.getConversationReference(context.activity);
+
+                    console.log("sending message to queue member...");
+                    await context.adapter.continueConversationAsync(
+                        process.env.MicrosoftAppId,
+                        ref,
+                        async (context) => {
+                            await context.sendActivity(message);
+                        });
+                });
+        });
+
+        await context.sendActivity( MessageFactory.text( 'All messages have been sent.' ) );
+    }
+
+    public async getPagedMembers( context: TurnContext ): Promise<any> {
+        let continuationToken;
+        const members = [];
+        do {
+            const pagedMembers = await TeamsInfo.getPagedMembers( context, 100, continuationToken );
+            continuationToken = pagedMembers.continuationToken;
+            members.push( ...pagedMembers.members );
+        } while ( continuationToken !== undefined );
+        return members;
+    }
 
   // Invoked when an action is taken on an Adaptive Card. The Adaptive Card sends an event to the Bot and this
   // method handles that event.
