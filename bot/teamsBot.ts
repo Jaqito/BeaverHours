@@ -2,6 +2,7 @@ import { default as axios } from "axios";
 import * as querystring from "querystring";
 import {
   TeamsActivityHandler,
+  TeamsInfo,
   CardFactory,
   TurnContext,
   AdaptiveCardInvokeValue,
@@ -40,9 +41,17 @@ export class TeamsBot extends TeamsActivityHandler {
         txt = removedMentionText.toLowerCase().replace(/\n|\r/g, "").trim();
       }
 
+        // ---------FIXME: remove after debugging
+        console.log("converstion information:\n", context.activity.conversation);
+
       // Trigger command by IM text
       switch (txt) {
         case "start office hour": {
+            // -------------FIXME: remove after debugging
+            console.log(context.activity.from);
+            const member = await TeamsInfo.getMember(context, context.activity.from.id);
+            console.log("Member Info:", member);
+            
           if (this.activeQueue) {
             await context.sendActivity(
               'Office hour already in progress. End active office hour with the command "end office hour"'
