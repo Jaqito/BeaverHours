@@ -1,3 +1,11 @@
+// Load environment variables from file if not in prod
+import path from "path";
+import dotenv from "dotenv";
+if (process.env.NODE_ENV !== "production") {
+  const ENV_FILE = path.join(__dirname, ".env.teamsfx.local");
+  dotenv.config({ path: ENV_FILE });
+}
+
 // Import required packages
 import * as restify from "restify";
 
