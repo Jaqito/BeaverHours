@@ -6,7 +6,7 @@ import {
   TurnContext,
   AdaptiveCardInvokeValue,
   AdaptiveCardInvokeResponse,
-  MessageFactory
+  MessageFactory,
 } from "botbuilder";
 import rawWelcomeCard from "./adaptiveCards/welcome.json";
 import rawLearnCard from "./adaptiveCards/learn.json";
@@ -117,27 +117,32 @@ export class TeamsBot extends TeamsActivityHandler {
           break;
         }
         case "get queue position": {
-            if (this.activeQueue) {
-                if (!this.activeQueue.checkQueue(context.activity.from.id)) {
-                  await context.sendActivity(
-                    "You are currently not in a queue."
-                  );
-                } else {
-                    const mention = {
-                        mentioned: context.activity.from,
-                        text: `<at>${ new TextEncoder().encode(context.activity.from.name) }</at>`,
-                        type: 'mention'
-                    };
-                    const replyActivity = MessageFactory.text(`Hello ${mention.text}! You are currently in position ${this.activeQueue.getQueuePosition(context.activity.from.id) + 1}.`);
-                    replyActivity.entities = [mention];
-                    await context.sendActivity(replyActivity);
-                }
+          if (this.activeQueue) {
+            if (!this.activeQueue.checkQueue(context.activity.from.id)) {
+              await context.sendActivity("You are currently not in a queue.");
             } else {
-                await context.sendActivity(
-                  "Currently no office hours being held. Please check the schedule to confirm the next office hours session!"
-                );
+              const mention = {
+                mentioned: context.activity.from,
+                text: `<at>${new TextEncoder().encode(
+                  context.activity.from.name
+                )}</at>`,
+                type: "mention",
+              };
+              const replyActivity = MessageFactory.text(
+                `Hello ${mention.text}! You are currently in position ${
+                  this.activeQueue.getQueuePosition(context.activity.from.id) +
+                  1
+                }.`
+              );
+              replyActivity.entities = [mention];
+              await context.sendActivity(replyActivity);
             }
-            break;
+          } else {
+            await context.sendActivity(
+              "Currently no office hours being held. Please check the schedule to confirm the next office hours session!"
+            );
+          }
+          break;
         }
       }
 
