@@ -1,5 +1,3 @@
-import { TeamsChannelAccount } from "botbuilder";
-
 enum UserRole {
   Student = "STUDENT",
   Instructor = "INSTRUCTOR",
@@ -28,7 +26,6 @@ interface QueueEntry {
   resolved: boolean;
   createdAt?: Date;
   updatedAt?: Date;
-  teamsInfo?: TeamsChannelAccount;
 }
 
 interface User {
@@ -56,10 +53,6 @@ export class Queue {
     return this.entries.length;
   }
 
-  get members(): Array<QueueEntry> {
-    return this.entries;
-  }
-
   findStudent(idToFind: string): QueueEntry {
     return this.entries.find((student) => student.userId == idToFind);
   }
@@ -75,7 +68,7 @@ export class Queue {
     return this.entries.indexOf(this.findStudent(idToGet));
   }
 
-  enqueueStudent(idToAdd: string, studentInfo: TeamsChannelAccount): void {
+  enqueueStudent(idToAdd: string): void {
     const studentToAdd: QueueEntry = {
       id: Math.random() * 1000,
       userId: idToAdd,
@@ -84,7 +77,6 @@ export class Queue {
       resolved: false,
       createdAt: new Date(Date.now()),
       // leaving updatedAt for post-creation updates only
-      teamsInfo: studentInfo,
     };
     this.entries.push(studentToAdd);
   }
