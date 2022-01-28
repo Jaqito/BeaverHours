@@ -204,41 +204,35 @@ export class TeamsBot extends TeamsActivityHandler {
       const memberinfo = teamMember.teamsInfo;
       console.log("a ", memberinfo);
       const message = MessageFactory.text(
-        `Hello ${memberinfo.givenName} ${
-          memberinfo.surname
-        }. As an update, you are in queue position ${
-          this.activeQueue.getQueuePosition(memberinfo.id) + 1
-        }.`
+        `Hello ${memberinfo.givenName} ${memberinfo.surname}. As an update, you are in queue position ${this.activeQueue.getQueuePosition(memberinfo.id) + 1}.`
       );
 
       console.log("sending proactive notification to queue memeber");
-      //   await context.adapter.continueConversation(TurnContext.getConversationReference(context.activity), async (context) => {
-      //      await context.sendActivity(message);
-      //   });
-      const convoParams = {
-        members: [memberinfo],
-        tenantId: context.activity.channelData.tenant.id,
-        activity: context.activity,
-      } as ConversationParameters;
+      await context.adapter.continueConversation(TurnContext.getConversationReference(context.activity), async (context) => {
+         await context.sendActivity(message);
+      });
+    // const convoParams = {
+    //     members: [memberinfo],
+    //     tenantId: context.activity.channelData.tenant.id,
+    //     activity: context.activity
+    // } as ConversationParameters;
+            
+    // await context.adapter.createConversationAsync(
+    //     process.env.MicrosoftAppId,
+    //     context.activity.channelId,
+    //     context.activity.serviceUrl,
+    //     null,
+    //     convoParams,
+    //     async (context) => {
+    //         const ref = TurnContext.getConversationReference(context.activity);
 
-      await context.adapter.createConversationAsync(
-        process.env.MicrosoftAppId,
-        context.activity.channelId,
-        context.activity.serviceUrl,
-        null,
-        convoParams,
-        async (context) => {
-          const ref = TurnContext.getConversationReference(context.activity);
-
-          await context.adapter.continueConversationAsync(
-            process.env.MicrosoftAppId,
-            ref,
-            async (context) => {
-              await context.sendActivity(message);
-            }
-          );
-        }
-      );
+    //         await context.adapter.continueConversationAsync(
+    //             process.env.MicrosoftAppId,
+    //             ref,
+    //             async (context) => {
+    //                 await context.sendActivity(message);
+    //             });
+    //     });
     });
 
     console.log("All messages have been sent.");
