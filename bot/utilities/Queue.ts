@@ -1,9 +1,8 @@
-import { QueueProperties, QueueEntry, QueueStatus, Storage } from "./Global";
+import { QueueProperties, QueueEntry, QueueStatus,  } from "./Global";
 
 export default class Queue {
   properties: QueueProperties;
   entries: Array<QueueEntry>;
-  private storage: Storage;
 
   constructor(
     {
@@ -13,24 +12,15 @@ export default class Queue {
       startTime = new Date(Date.now()),
       status = QueueStatus.Active,
     }: QueueProperties,
-    storage?: Storage
   ) {
     this.properties = { id, ownerId, channelId, startTime, status };
     this.entries = [];
-    this.storage = storage;
-  }
+   }
 
   get length(): number {
     return this.entries.length;
   }
 
-  async initializeStorage(config): Promise<void> {
-    try {
-      await this.storage.connect(config);
-    } catch (err) {
-      console.error(err);
-    }
-  }
 
   findStudent(idToFind: string): QueueEntry {
     return this.entries.find((student) => student.userId == idToFind);

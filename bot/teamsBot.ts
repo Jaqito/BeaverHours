@@ -7,6 +7,7 @@ import {
     AdaptiveCardInvokeValue,
     AdaptiveCardInvokeResponse,
 } from 'botbuilder';
+import { Queue as QueueEntity } from './entities/queue';
 import rawWelcomeCard from './adaptiveCards/welcome.json';
 import rawLearnCard from './adaptiveCards/learn.json';
 import { AdaptiveCards } from '@microsoft/adaptivecards-tools';
@@ -51,6 +52,19 @@ export class TeamsBot extends TeamsActivityHandler {
                             ownerId: context.activity.from.id,
                             channelId: context.activity.channelId,
                         });
+                        const result = await this.dbConnection
+                            .createQueryBuilder()
+                            .insert()
+                            .into(QueueEntity)
+                            .values({
+                                ownerId: this.activeQueue.properties.ownerId,
+                                channelId: this.activeQueue.properties.channelId,
+                                startTime: this.activeQueue.properties.startTime,
+                                status: this.activeQueue.properties.status,
+                            })
+                            .execute();
+                        console.log(result);
+
                         await context.sendActivity(
                             '<b>Started new Queue<b>\n\n' +
                                 `<b>id</b>        ${this.activeQueue.properties.id}\n\n` +
