@@ -13,6 +13,7 @@ import rawLearnCard from './adaptiveCards/learn.json';
 import { AdaptiveCards } from '@microsoft/adaptivecards-tools';
 import Queue from './utilities/Queue';
 import { Connection } from 'typeorm';
+import addQueueToDb from './api/addQueueToDb';
 
 export interface DataInterface {
     likeCount: number;
@@ -52,19 +53,7 @@ export class TeamsBot extends TeamsActivityHandler {
                             ownerId: context.activity.from.id,
                             channelId: context.activity.channelId,
                         });
-                        const result = await this.dbConnection
-                            .createQueryBuilder()
-                            .insert()
-                            .into(QueueEntity)
-                            .values({
-                                ownerId: this.activeQueue.properties.ownerId,
-                                channelId: this.activeQueue.properties.channelId,
-                                startTime: this.activeQueue.properties.startTime,
-                                status: this.activeQueue.properties.status,
-                            })
-                            .execute();
-                        console.log(result);
-
+                        await addQueueToDb(this.dbConnection, this.activeQueue,)
                         await context.sendActivity(
                             '<b>Started new Queue<b>\n\n' +
                                 `<b>id</b>        ${this.activeQueue.properties.id}\n\n` +
