@@ -1,26 +1,23 @@
-import { QueueProperties, QueueEntry, QueueStatus,  } from "./Global";
+import { QueueProperties, QueueEntry, QueueStatus } from "./Global";
 
 export default class Queue {
   properties: QueueProperties;
   entries: Array<QueueEntry>;
 
-  constructor(
-    {
-      id = -1,
-      ownerId = "-1",
-      channelId = "-1",
-      startTime = new Date(Date.now()),
-      status = QueueStatus.Active,
-    }: QueueProperties,
-  ) {
+  constructor({
+    id = -1,
+    ownerId = "-1",
+    channelId = "-1",
+    startTime = new Date(Date.now()),
+    status = QueueStatus.Active,
+  }: QueueProperties) {
     this.properties = { id, ownerId, channelId, startTime, status };
     this.entries = [];
-   }
+  }
 
   get length(): number {
     return this.entries.length;
   }
-
 
   findStudent(idToFind: string): QueueEntry {
     return this.entries.find((student) => student.userId == idToFind);
