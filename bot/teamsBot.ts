@@ -6,6 +6,7 @@ import {
   TurnContext,
   AdaptiveCardInvokeValue,
   AdaptiveCardInvokeResponse,
+  MessageFactory,
 } from "botbuilder";
 import rawWelcomeCard from "./adaptiveCards/welcome.json";
 import rawLearnCard from "./adaptiveCards/learn.json";
@@ -56,6 +57,15 @@ export class TeamsBot extends TeamsActivityHandler {
         txt = removedMentionText.toLowerCase().replace(/\n|\r/g, "").trim();
       }
 
+      // build a reusable mention to user that invoked bot
+      const mention = {
+        mentioned: context.activity.from,
+        text: `<at>${new TextEncoder().encode(
+          context.activity.from.name
+        )}</at>`,
+        type: "mention",
+      };
+
       // Trigger command by IM text
       switch (txt) {
         case "start office hour": {
@@ -97,18 +107,84 @@ export class TeamsBot extends TeamsActivityHandler {
         case "join office hours": {
           if (this.activeQueue) {
             if (this.activeQueue.checkQueue(context.activity.from.id)) {
-              await context.sendActivity("You are already in queue.");
+              const replyActivity = MessageFactory.text(
+                `Hello ${mention.text}! You are already in queue.`
+              );
+              replyActivity.entities = [mention];
+              await context.sendActivity(replyActivity);
             } else {
               this.activeQueue.enqueueStudent(context.activity.from.id);
-              await context.sendActivity(
-                `You have entered the office hours queue, the instructor will get to you! You are in position ${
+              const replyActivity = MessageFactory.text(
+                `Hello ${
+                  mention.text
+                }! You have entered the office hours queue, the instructor will get to you! You are in position ${
                   this.activeQueue.getQueuePosition(context.activity.from.id) +
                   1
                 }.`
               );
+              replyActivity.entities = [mention];
+              await context.sendActivity(replyActivity);
               await context.sendActivity(
                 `Current queue: ${this.activeQueue.queueToString()}`
               );
+            }
+          } else {
+            const replyActivity = MessageFactory.text(
+              `Hello ${mention.text}! Currently no office hours being held. Please check the schedule to confirm the next office hours session!`
+            );
+            replyActivity.entities = [mention];
+            await context.sendActivity(replyActivity);
+          }
+          break;
+        }
+        case "leave office hours": {
+          if (this.activeQueue) {
+            if (!this.activeQueue.checkQueue(context.activity.from.id)) {
+              const replyActivity = MessageFactory.text(
+                `Hello ${mention.text}! Unable to remove, you are currently not in a queue.`
+              );
+              replyActivity.entities = [mention];
+              await context.sendActivity(replyActivity);
+            } else {
+              this.activeQueue.dequeueStudent(context.activity.from.id);
+              const replyActivity = MessageFactory.text(
+                `Hello ${mention.text}! You have successfully been removed from the queue.`
+              );
+              replyActivity.entities = [mention];
+              await context.sendActivity(replyActivity);
+              await context.sendActivity(
+                `Current queue: ${this.activeQueue.queueToString()}`
+              );
+            }
+          } else {
+            const replyActivity = MessageFactory.text(
+              `Hello ${mention.text}! Currently no office hours being held. Please check the schedule to confirm the next office hours session!`
+            );
+            replyActivity.entities = [mention];
+            await context.sendActivity(replyActivity);
+          }
+          break;
+        }
+        case "get queue position": {
+          if (this.activeQueue) {
+            if (!this.activeQueue.checkQueue(context.activity.from.id)) {
+              await context.sendActivity("You are currently not in a queue.");
+            } else {
+              const mention = {
+                mentioned: context.activity.from,
+                text: `<at>${new TextEncoder().encode(
+                  context.activity.from.name
+                )}</at>`,
+                type: "mention",
+              };
+              const replyActivity = MessageFactory.text(
+                `Hello ${mention.text}! You are currently in position ${
+                  this.activeQueue.getQueuePosition(context.activity.from.id) +
+                  1
+                }.`
+              );
+              replyActivity.entities = [mention];
+              await context.sendActivity(replyActivity);
             }
           } else {
             await context.sendActivity(
@@ -116,24 +192,6 @@ export class TeamsBot extends TeamsActivityHandler {
             );
           }
           break;
-        }
-        case "leave office hours": {
-          if (this.activeQueue) {
-            if (!this.activeQueue.checkQueue(context.activity.from.id)) {
-              await context.sendActivity(
-                "Unable to remove, you are currently not in a queue."
-              );
-            } else {
-              this.activeQueue.dequeueStudent(context.activity.from.id);
-              await context.sendActivity(
-                `You have successfully been removed from the queue.<br>Current queue: ${this.activeQueue.queueToString()}`
-              );
-            }
-          } else {
-            await context.sendActivity(
-              "Currently no office hours being held. Please check the schedule to confirm the next office hours session!"
-            );
-          }
         }
       }
 
