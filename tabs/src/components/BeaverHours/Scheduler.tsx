@@ -1,5 +1,3 @@
-// const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
-
 export function Scheduler() {
     return genereateWeekTable();
 }
@@ -22,32 +20,30 @@ function genereateWeekTable() {
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <th>Sunday</th>
-                    <td><input type="text"></input></td>
-                    <td><input type="time"></input></td>
-                    <td><input type="number"></input> weeks</td>
-                    <td><input type='button'>Add time</input></td>
-                </tr>
-                <tr>
-                    <th>Monday</th>
-                </tr>
-                <tr>
-                    <th>Tuesday</th>
-                </tr>
-                <tr>
-                    <th>Wednesday</th>
-                </tr>
-                <tr>
-                    <th>Thursday</th>
-                </tr>
-                <tr>
-                    <th>Friday</th>
-                </tr>
-                <tr>
-                    <th>Saturday</th>
-                </tr>
+                {newRow("Sunday")}
+                {newRow("Monday")}
+                {newRow("Tuesday")}
+                {newRow("Wednesday")}
+                {newRow("Thursday")}
+                {newRow("Friday")}
+                {newRow("Saturday")}
             </tbody>
         </table>
     );
+}
+
+function newRow(name: string) {
+    return (
+        <tr>
+            <th>{name}</th>
+            <td><input type="text"></input></td>
+            <td><input type="time"></input></td>
+            <td><input type="number" min={1}></input> weeks</td>
+            {/* <td><input type="button" onClick={(e) => addRow(name)}>Add time</input></td> */}
+        </tr>
+    )
+}
+
+function addRow(name: string) {
+    newRow(name);
 }
