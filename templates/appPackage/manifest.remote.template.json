@@ -48,6 +48,10 @@
             {
               "title": "leave office hours",
               "description": "Leave the office hours queue"
+            },
+            {
+              "title": "get queue position",
+              "description": "Find out where you are in line"
             }
           ]
         }
