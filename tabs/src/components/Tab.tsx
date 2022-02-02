@@ -1,6 +1,6 @@
 import React from "react";
 import { Welcome } from "./sample/Welcome";
-import {Scheduler} from "./BeaverHours/Scheduler";
+import { Scheduler } from "./BeaverHours/Scheduler";
 
 var showFunction = Boolean(process.env.REACT_APP_FUNC_NAME);
 
