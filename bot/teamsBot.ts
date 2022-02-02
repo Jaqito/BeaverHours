@@ -6,6 +6,7 @@ import {
   CardFactory,
   TeamsActivityHandler,
   TurnContext,
+  MessageFactory,
 } from "botbuilder";
 import * as querystring from "querystring";
 import { Connection } from "typeorm";
