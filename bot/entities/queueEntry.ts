@@ -18,8 +18,8 @@ export class QueueEntry extends BaseEntity {
   @Column()
   userId: string;
 
-  @Column()
-  question?: string;
+  @Column({ nullable: true })
+  question: string | null;
 
   @Column()
   resolved: boolean;

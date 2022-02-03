@@ -12,6 +12,7 @@ import * as querystring from "querystring";
 import { Connection } from "typeorm";
 import rawLearnCard from "./adaptiveCards/learn.json";
 import rawWelcomeCard from "./adaptiveCards/welcome.json";
+import addQueueEntryToDb from "./api/addQueueEntryToDb";
 import addQueueToDb from "./api/addQueueToDb";
 import Queue from "./utilities/Queue";
 
@@ -101,6 +102,11 @@ export class TeamsBot extends TeamsActivityHandler {
               await context.sendActivity(replyActivity);
             } else {
               this.activeQueue.enqueueStudent(context.activity.from.id);
+              await addQueueEntryToDb(
+                this.dbConnection,
+                context.activity.from.id,
+                this.activeQueue.properties.id
+              );
               const replyActivity = MessageFactory.text(
                 `Hello ${
                   mention.text
