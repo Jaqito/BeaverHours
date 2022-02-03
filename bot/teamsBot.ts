@@ -11,6 +11,8 @@ import addQueueEntryToDb from "./api/addQueueEntryToDb";
 import addQueueToDb from "./api/addQueueToDb";
 import fetchQueuesByOwner from "./api/fetchQueuesByOwner";
 import fetchQueueEntriesByQueueId from "./api/fetchQueueEntriesByQueueId";
+import updateQueueStatusInDb from "./api/updateQueueStatusInDb";
+import { QueueStatus } from "./utilities/Global";
 import Queue from "./utilities/Queue";
 
 export interface DataInterface {
@@ -76,6 +78,8 @@ export class TeamsBot extends TeamsActivityHandler {
         }
         case "end office hour": {
           if (this.activeQueue) {
+            this.activeQueue.updateStatus(QueueStatus.Closed);
+            await updateQueueStatusInDb(this.dbConnection, this.activeQueue);
             this.activeQueue = null;
             await context.sendActivity("Office hour successfully ended.");
           } else {
