@@ -1,12 +1,11 @@
 import React from "react";
 export function Scheduler() {
-//   return genereateWeekTable();
     return <ScheduleForm />
 }
 
 interface DaySchedule {
     startAt?: string,
-    endAt?: Date, 
+    endAt?: string, 
     repeated?: number
 }
 
@@ -46,45 +45,40 @@ class ScheduleForm extends React.Component<{}, OfficeHoursSchedule> {
     if (fieldname === "startAt") {
         console.log("edited startAt for" + dayOfWeek);
         this.setState((state) => {
-            // return {
-            //     [dayOfWeek]: {startAt: event.target.value} as DaySchedule} as OfficeHoursSchedule
-            // }
-            // var currentState = state[dayOfWeek] as DaySchedule;
-            // return Object.assign({
-            //     dayOfWeek: {startAt: event.target.value} as DaySchedule
-            // }, state[dayOfWeek]);
             return {
-                [dayOfWeek]: Object.assign({startAt: event.target.value}, state[dayOfWeek])
+                [dayOfWeek]: {
+                    startAt: event.target.value, 
+                    endAt: state[dayOfWeek]?.endAt, 
+                    repeated: state[dayOfWeek]?.repeated
+                }
             }
         });
     } else if (fieldname === "endAt") {
         console.log("edited endAt for" + dayOfWeek);
-        // this.setState({[dayOfWeek]: {endAt: event.target.value} as DaySchedule} as OfficeHoursSchedule);
         this.setState((state) => {
-            // return {
-            //     [dayOfWeek]: {startAt: event.target.value} as DaySchedule} as OfficeHoursSchedule
-            // }
-            // var currentState = state[dayOfWeek] as DaySchedule;
-            // return Object.assign(state, {
-            //     [dayOfWeek]: {endAt: event.target.value} as DaySchedule
-            // } as OfficeHoursSchedule);
             return {
-                [dayOfWeek]: Object.assign({endAt: event.target.value}, state[dayOfWeek])
+                [dayOfWeek]: {
+                    startAt: state[dayOfWeek]?.startAt,
+                    endAt: event.target.value,
+                    repeated: state[dayOfWeek]?.repeated
+                }
             }
         });
     } else if (fieldname === "repeated") {
         console.log("edited repeated for" + dayOfWeek);
-        // this.setState({[dayOfWeek]: {repeated: event.target.value as DaySchedule} as OfficeHoursSchedule});
         this.setState((state) => {
             return {
-                [dayOfWeek]: Object.assign({repeated: event.target.value}, state[dayOfWeek])
+                [dayOfWeek]: {
+                    startAt: state[dayOfWeek]?.startAt,
+                    endAt: state[dayOfWeek]?.endAt,
+                    repeated: event.target.value
+                }
             }
-        })
+        });
     }
   }
 
   handleSubmit(event: any) {
-    // alert("A schedule was submitted: " + this.state);
     console.log("A schedule was submitted:\n", this.state);
     event.preventDefault();
   }
