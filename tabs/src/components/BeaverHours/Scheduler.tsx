@@ -1,36 +1,36 @@
 import React from "react";
 export function Scheduler() {
-    return <ScheduleForm />
+  return <ScheduleForm />;
 }
 
 interface DaySchedule {
-    startAt?: string,
-    endAt?: string, 
-    repeated?: number
+  startAt?: string;
+  endAt?: string;
+  repeated?: number;
 }
 
 interface OfficeHoursSchedule {
-    [key: string]: DaySchedule | undefined,
-    "Sunday"?: DaySchedule,
-    "Monday"?: DaySchedule,
-    "Tuesday"?: DaySchedule,
-    "Wednesday"?: DaySchedule,
-    "Thursday"?: DaySchedule,
-    "Friday"?: DaySchedule,
-    "Saturday"?: DaySchedule,
+  [key: string]: DaySchedule | undefined;
+  Sunday?: DaySchedule;
+  Monday?: DaySchedule;
+  Tuesday?: DaySchedule;
+  Wednesday?: DaySchedule;
+  Thursday?: DaySchedule;
+  Friday?: DaySchedule;
+  Saturday?: DaySchedule;
 }
 
 class ScheduleForm extends React.Component<{}, OfficeHoursSchedule> {
   constructor(props: any) {
     super(props);
     this.state = {
-       "Sunday": {} as DaySchedule,
-       "Monday": {} as DaySchedule,
-       "Tuesday": {} as DaySchedule,
-       "Wednesday": {} as DaySchedule,
-       "Thursday": {} as DaySchedule,
-       "Friday": {} as DaySchedule,
-       "Saturday": {} as DaySchedule,
+      Sunday: {} as DaySchedule,
+      Monday: {} as DaySchedule,
+      Tuesday: {} as DaySchedule,
+      Wednesday: {} as DaySchedule,
+      Thursday: {} as DaySchedule,
+      Friday: {} as DaySchedule,
+      Saturday: {} as DaySchedule,
     } as OfficeHoursSchedule;
 
     this.handleChange = this.handleChange.bind(this);
@@ -43,38 +43,38 @@ class ScheduleForm extends React.Component<{}, OfficeHoursSchedule> {
     var dayOfWeek = splitname[0];
     var fieldname = splitname[1];
     if (fieldname === "startAt") {
-        console.log("edited startAt for" + dayOfWeek);
-        this.setState((state) => {
-            return {
-                [dayOfWeek]: {
-                    startAt: event.target.value, 
-                    endAt: state[dayOfWeek]?.endAt, 
-                    repeated: state[dayOfWeek]?.repeated
-                }
-            }
-        });
+      console.log("edited startAt for" + dayOfWeek);
+      this.setState((state) => {
+        return {
+          [dayOfWeek]: {
+            startAt: event.target.value,
+            endAt: state[dayOfWeek]?.endAt,
+            repeated: state[dayOfWeek]?.repeated,
+          },
+        };
+      });
     } else if (fieldname === "endAt") {
-        console.log("edited endAt for" + dayOfWeek);
-        this.setState((state) => {
-            return {
-                [dayOfWeek]: {
-                    startAt: state[dayOfWeek]?.startAt,
-                    endAt: event.target.value,
-                    repeated: state[dayOfWeek]?.repeated
-                }
-            }
-        });
+      console.log("edited endAt for" + dayOfWeek);
+      this.setState((state) => {
+        return {
+          [dayOfWeek]: {
+            startAt: state[dayOfWeek]?.startAt,
+            endAt: event.target.value,
+            repeated: state[dayOfWeek]?.repeated,
+          },
+        };
+      });
     } else if (fieldname === "repeated") {
-        console.log("edited repeated for" + dayOfWeek);
-        this.setState((state) => {
-            return {
-                [dayOfWeek]: {
-                    startAt: state[dayOfWeek]?.startAt,
-                    endAt: state[dayOfWeek]?.endAt,
-                    repeated: event.target.value
-                }
-            }
-        });
+      console.log("edited repeated for" + dayOfWeek);
+      this.setState((state) => {
+        return {
+          [dayOfWeek]: {
+            startAt: state[dayOfWeek]?.startAt,
+            endAt: state[dayOfWeek]?.endAt,
+            repeated: event.target.value,
+          },
+        };
+      });
     }
   }
 
@@ -121,13 +121,27 @@ class ScheduleForm extends React.Component<{}, OfficeHoursSchedule> {
       <tr>
         <th>{name}</th>
         <td>
-          <input type="time" name={name + "-startAt"} onChange={this.handleChange}></input>
+          <input
+            type="time"
+            name={name + "-startAt"}
+            onChange={this.handleChange}
+          ></input>
         </td>
         <td>
-          <input type="time" name={name + "-endAt"} onChange={this.handleChange}></input>
+          <input
+            type="time"
+            name={name + "-endAt"}
+            onChange={this.handleChange}
+          ></input>
         </td>
         <td>
-          <input type="number" name={name + "-repeated"} min={1} onChange={this.handleChange}></input> weeks
+          <input
+            type="number"
+            name={name + "-repeated"}
+            min={1}
+            onChange={this.handleChange}
+          ></input>{" "}
+          weeks
         </td>
         {/* <td><input type="button" onClick={(e) => addRow(name)}>Add time</input></td> */}
       </tr>
