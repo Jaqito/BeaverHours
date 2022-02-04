@@ -14,7 +14,7 @@ export default async (conn: Connection, ownerId: string, channelId: string) => {
     return result;
   } catch (e) {
     console.log(
-      `Failed to fetch Queues to Database with ownerId: ${ownerId} and channelId: ${channelId}`,
+      `Failed to fetch Queues from Database with ownerId: ${ownerId} and channelId: ${channelId}`,
       e
     );
     throw e;
