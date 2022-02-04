@@ -5,12 +5,13 @@ export function Scheduler() {
 }
 
 interface DaySchedule {
-    startAt?: Date,
+    startAt?: string,
     endAt?: Date, 
     repeated?: number
 }
 
 interface OfficeHoursSchedule {
+    [key: string]: DaySchedule | undefined,
     "Sunday"?: DaySchedule,
     "Monday"?: DaySchedule,
     "Tuesday"?: DaySchedule,
@@ -38,22 +39,47 @@ class ScheduleForm extends React.Component<{}, OfficeHoursSchedule> {
   }
 
   handleChange(event: any) {
-    // this.setState({ value: event.target.value });
-    // var dayOfWeek = event.target.id;
-    // this.setState({ this.state.dayOfWeek: event.target.value as DaySchedule });
-    // console.log("schedule edited"); //FIXME: remove after debugging
+    event.persist();
     var splitname = event.target.name.split("-");
     var dayOfWeek = splitname[0];
     var fieldname = splitname[1];
     if (fieldname === "startAt") {
         console.log("edited startAt for" + dayOfWeek);
-        this.setState({[dayOfWeek]: {startAt: event.target.value} as DaySchedule} as OfficeHoursSchedule);
+        this.setState((state) => {
+            // return {
+            //     [dayOfWeek]: {startAt: event.target.value} as DaySchedule} as OfficeHoursSchedule
+            // }
+            // var currentState = state[dayOfWeek] as DaySchedule;
+            // return Object.assign({
+            //     dayOfWeek: {startAt: event.target.value} as DaySchedule
+            // }, state[dayOfWeek]);
+            return {
+                [dayOfWeek]: Object.assign({startAt: event.target.value}, state[dayOfWeek])
+            }
+        });
     } else if (fieldname === "endAt") {
-        this.setState({[dayOfWeek]: {endAt: event.target.value} as DaySchedule} as OfficeHoursSchedule);
         console.log("edited endAt for" + dayOfWeek);
+        // this.setState({[dayOfWeek]: {endAt: event.target.value} as DaySchedule} as OfficeHoursSchedule);
+        this.setState((state) => {
+            // return {
+            //     [dayOfWeek]: {startAt: event.target.value} as DaySchedule} as OfficeHoursSchedule
+            // }
+            // var currentState = state[dayOfWeek] as DaySchedule;
+            // return Object.assign(state, {
+            //     [dayOfWeek]: {endAt: event.target.value} as DaySchedule
+            // } as OfficeHoursSchedule);
+            return {
+                [dayOfWeek]: Object.assign({endAt: event.target.value}, state[dayOfWeek])
+            }
+        });
     } else if (fieldname === "repeated") {
         console.log("edited repeated for" + dayOfWeek);
-        this.setState({[dayOfWeek]: {repeated: event.target.value as DaySchedule} as OfficeHoursSchedule});
+        // this.setState({[dayOfWeek]: {repeated: event.target.value as DaySchedule} as OfficeHoursSchedule});
+        this.setState((state) => {
+            return {
+                [dayOfWeek]: Object.assign({repeated: event.target.value}, state[dayOfWeek])
+            }
+        })
     }
   }
 
@@ -66,14 +92,6 @@ class ScheduleForm extends React.Component<{}, OfficeHoursSchedule> {
   render() {
     return (
       <form onSubmit={this.handleSubmit}>
-        {/* <label>
-          Name:
-          <input
-            type="text"
-            value={this.state.value}
-            onChange={this.handleChange}
-          />
-        </label> */}
         {this.genereateWeekTable()}
         <input type="submit" value="Submit" />
       </form>
