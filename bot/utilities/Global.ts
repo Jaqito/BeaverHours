@@ -23,13 +23,3 @@ export interface QueueProperties {
   startTime?: Date;
   status?: QueueStatus;
 }
-
-export interface QueueEntry {
-  id: number;
-  userId: string;
-  queueId: number;
-  question: string;
-  resolved: boolean;
-  createdAt?: Date;
-  updatedAt?: Date;
-}

@@ -9,7 +9,7 @@ export default async (
 ) => {
   console.log(userId, queueId);
   try {
-    await conn
+    const result = await conn
       .createQueryBuilder()
       .insert()
       .into(QueueEntryEntity)
@@ -20,6 +20,7 @@ export default async (
         question: question ? question : null, //if no question insert null into db.
       })
       .execute();
+    return result.raw[0];
   } catch (e) {
     console.log("Failed to add Queue to Database", e);
     throw e;

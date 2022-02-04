@@ -98,12 +98,12 @@ export class TeamsBot extends TeamsActivityHandler {
               replyActivity.entities = [mention];
               await context.sendActivity(replyActivity);
             } else {
-              this.activeQueue.enqueueStudent(context.activity.from.id);
-              await addQueueEntryToDb(
+              const queueEntryEntity = await addQueueEntryToDb(
                 this.dbConnection,
                 context.activity.from.id,
                 this.activeQueue.properties.id
               );
+              this.activeQueue.enqueueQueueEntryEntity(queueEntryEntity);
               const replyActivity = MessageFactory.text(
                 `Hello ${
                   mention.text

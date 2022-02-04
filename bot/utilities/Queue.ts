@@ -1,5 +1,7 @@
-import { QueueProperties, QueueEntry, QueueStatus } from "./Global";
+import QueueEntry from "./QueueEntry";
+import { QueueProperties, QueueStatus } from "./Global";
 import { QueueEntity } from "../entities/queue";
+import { QueueEntryEntity } from "../entities/queueEntry";
 
 export default class Queue {
   properties: QueueProperties;
@@ -49,16 +51,18 @@ export default class Queue {
     return this.entries.indexOf(this.findStudent(idToGet));
   }
 
-  enqueueStudent(idToAdd: string): void {
-    const studentToAdd: QueueEntry = {
-      id: Math.random() * 1000,
+  enqueueQueueEntryEntity(queueEntryEntity: QueueEntryEntity) {
+    this.entries.push(QueueEntry.fromQueueEntryEntity(queueEntryEntity));
+  }
+
+  enqueueStudentById(idToAdd: string): void {
+    const studentToAdd = new QueueEntry({
+      id: null,
       userId: idToAdd,
       queueId: this.properties.id,
       question: "",
       resolved: false,
-      createdAt: new Date(Date.now()),
-      // leaving updatedAt for post-creation updates only
-    };
+    });
     this.entries.push(studentToAdd);
   }
 
@@ -68,28 +72,16 @@ export default class Queue {
 
   propertiesToString(): string {
     return (
-      `<b>id</b>        ${this.properties.id}\n\n` +
-      `<b>ownerId</b>   ${this.properties.ownerId}\n\n` +
-      `<b>channelId</b> ${this.properties.channelId}\n\n` +
-      `<b>status</b>    ${this.properties.status}\n\n` +
-      `<b>at</b>        ${this.properties.startTime}`
+      `\n\n           id: ${this.properties.id}\n` +
+      `      ownerId: ${this.properties.ownerId}\n` +
+      `    channelId: ${this.properties.channelId}\n` +
+      `       status: ${this.properties.status}\n` +
+      `           at: ${this.properties.startTime}`
     );
   }
 
-  entriesToString(): String {
-    var queueString: String = "[";
-    this.entries.forEach(function (student) {
-      if (queueString.length != 1) {
-        queueString += ",";
-      }
-
-      queueString += `{id: ${student.id},
-          userId: ${student.userId},
-          resolved: ${student.resolved}, 
-          createdAt: ${student.createdAt},
-          updatedAt: ${student.updatedAt ?? ""}}`;
-    });
-    queueString += "]";
-    return queueString;
+  entriesToString(): string {
+    const entryStrings = this.entries.map((entry) => entry.toString());
+    return "[" + entryStrings.join(",") + "]";
   }
 }
