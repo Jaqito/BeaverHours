@@ -52,12 +52,7 @@
             {
               "title": "get queue position",
               "description": "Find out where you are in line"
-            }
-          ]
-        },
-        {
-          "scopes": ["personal"],
-          "commands": [
+            },
             {
               "title": "my office hours",
               "description": "Get a list of your office hours"
