@@ -15,6 +15,7 @@ import rawWelcomeCard from "./adaptiveCards/welcome.json";
 import addQueueEntryToDb from "./api/addQueueEntryToDb";
 import addQueueToDb from "./api/addQueueToDb";
 import fetchQueuesByOwner from "./api/fetchQueuesByOwner";
+import fetchQueueEntriesByQueueId from "./api/fetchQueueEntriesByQueueId";
 import Queue from "./utilities/Queue";
 
 export interface DataInterface {
@@ -197,6 +198,34 @@ export class TeamsBot extends TeamsActivityHandler {
               await context.sendActivity(queue.propertiesToString())
           );
           break;
+        }
+      }
+
+      if (txt.startsWith("view queue")) {
+        try {
+          const queueId = txt.replace("view queue", "").trim();
+          if (queueId === "") {
+            if (this.activeQueue) {
+              await context.sendActivity(this.activeQueue.entriesToString());
+            } else {
+              await context.sendActivity(
+                'No office hour currently active. Did you mean "view queue (queueId)"?'
+              );
+            }
+          } else {
+            const queueEntryEntities = await fetchQueueEntriesByQueueId(
+              this.dbConnection,
+              Number(queueId)
+            );
+            const tempQueue = new Queue({});
+            queueEntryEntities.forEach((queueEntryEntity) => {
+              tempQueue.enqueueQueueEntryEntity(queueEntryEntity);
+            });
+            context.sendActivity(tempQueue.entriesToString());
+          }
+        } catch (e) {
+          console.error('Error performing command "view queue"\n' + e);
+          throw e;
         }
       }
 
