@@ -52,7 +52,9 @@ export default class Queue {
   }
 
   enqueueQueueEntryEntity(queueEntryEntity: QueueEntryEntity) {
-    this.entries.push(QueueEntry.fromQueueEntryEntity(queueEntryEntity));
+    const newEntry = QueueEntry.fromQueueEntryEntity(queueEntryEntity);
+    newEntry.setQueueId(this.properties.id);
+    this.entries.push(newEntry);
   }
 
   enqueueStudentById(idToAdd: string): void {

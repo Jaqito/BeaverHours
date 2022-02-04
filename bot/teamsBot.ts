@@ -203,8 +203,8 @@ export class TeamsBot extends TeamsActivityHandler {
 
       if (txt.startsWith("view queue")) {
         try {
-          const queueId = txt.replace("view queue", "").trim();
-          if (queueId === "") {
+          const queueIdString: string = txt.replace("view queue", "").trim();
+          if (queueIdString === "") {
             if (this.activeQueue) {
               await context.sendActivity(this.activeQueue.entriesToString());
             } else {
@@ -213,15 +213,22 @@ export class TeamsBot extends TeamsActivityHandler {
               );
             }
           } else {
-            const queueEntryEntities = await fetchQueueEntriesByQueueId(
-              this.dbConnection,
-              Number(queueId)
-            );
-            const tempQueue = new Queue({});
-            queueEntryEntities.forEach((queueEntryEntity) => {
-              tempQueue.enqueueQueueEntryEntity(queueEntryEntity);
-            });
-            context.sendActivity(tempQueue.entriesToString());
+            const queueId = Number(queueIdString);
+            if (isNaN(queueId)) {
+              await context.sendActivity(
+                'Provided queue ID is not a valid integer. Please provide a valid integer for the command "view queue (queueId)".'
+              );
+            } else {
+              const queueEntryEntities = await fetchQueueEntriesByQueueId(
+                this.dbConnection,
+                queueId
+              );
+              const tempQueue = new Queue({ id: queueId });
+              queueEntryEntities.forEach((queueEntryEntity) => {
+                tempQueue.enqueueQueueEntryEntity(queueEntryEntity);
+              });
+              await context.sendActivity(tempQueue.entriesToString());
+            }
           }
         } catch (e) {
           console.error('Error performing command "view queue"\n' + e);

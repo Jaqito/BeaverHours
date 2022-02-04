@@ -17,7 +17,11 @@ export default class QueueEntry {
     this.resolved = resolved;
   }
 
-  static fromQueueEntryEntity(queueEntryEntity: QueueEntryEntity) {
+  setQueueId(queueId: number): void {
+    this.queueId = queueId;
+  }
+
+  static fromQueueEntryEntity(queueEntryEntity: QueueEntryEntity): QueueEntry {
     const entry = new QueueEntry({
       id: queueEntryEntity.id,
       userId: queueEntryEntity.userId,
@@ -30,7 +34,7 @@ export default class QueueEntry {
     return entry;
   }
 
-  toString() {
+  toString(): string {
     return (
       `\n\n           id: ${this.id},\n` +
       `      queueId: ${this.queueId},\n` +
