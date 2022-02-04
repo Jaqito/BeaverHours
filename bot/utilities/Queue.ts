@@ -1,4 +1,5 @@
 import { QueueProperties, QueueEntry, QueueStatus } from "./Global";
+import { QueueEntity } from "../entities/queue";
 
 export default class Queue {
   properties: QueueProperties;
@@ -13,6 +14,16 @@ export default class Queue {
   }: QueueProperties) {
     this.properties = { id, ownerId, channelId, startTime, status };
     this.entries = [];
+  }
+
+  static fromQueueEntity(queueEntity: QueueEntity): Queue {
+    return new Queue({
+      id: queueEntity.id,
+      ownerId: queueEntity.ownerId,
+      channelId: queueEntity.channelId,
+      startTime: new Date(queueEntity.startTime),
+      status: queueEntity.status as QueueStatus,
+    });
   }
 
   updateId(queueId: number) {

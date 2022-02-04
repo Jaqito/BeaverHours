@@ -14,6 +14,7 @@ import rawLearnCard from "./adaptiveCards/learn.json";
 import rawWelcomeCard from "./adaptiveCards/welcome.json";
 import addQueueEntryToDb from "./api/addQueueEntryToDb";
 import addQueueToDb from "./api/addQueueToDb";
+import fetchQueuesByOwner from "./api/fetchQueuesByOwner";
 import Queue from "./utilities/Queue";
 
 export interface DataInterface {
@@ -180,6 +181,21 @@ export class TeamsBot extends TeamsActivityHandler {
               "Currently no office hours being held. Please check the schedule to confirm the next office hours session!"
             );
           }
+          break;
+        }
+        case "my office hours": {
+          const queues = await fetchQueuesByOwner(
+            this.dbConnection,
+            context.activity.from.id,
+            context.activity.channelId
+          );
+          const queueObjects = queues.map((queueEntity) =>
+            Queue.fromQueueEntity(queueEntity)
+          );
+          queueObjects.forEach(
+            async (queue) =>
+              await context.sendActivity(queue.propertiesToString())
+          );
           break;
         }
       }
