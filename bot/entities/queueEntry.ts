@@ -8,10 +8,10 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
-import { Queue } from "./queue";
+import { QueueEntity } from "./queue";
 
 @Entity("queueEntry")
-export class QueueEntry extends BaseEntity {
+export class QueueEntryEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
@@ -30,7 +30,7 @@ export class QueueEntry extends BaseEntity {
   @UpdateDateColumn()
   updatedAt: Date = new Date();
 
-  @ManyToOne(() => Queue, (queue) => queue.queueEntries)
+  @ManyToOne(() => QueueEntity, (queue) => queue.queueEntries)
   @JoinColumn({ name: "queueId" })
-  queue: Queue;
+  queue: QueueEntity;
 }

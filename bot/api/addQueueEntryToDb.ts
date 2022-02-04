@@ -1,7 +1,5 @@
 import { Connection } from "typeorm";
-import Queue from "../utilities/Queue";
-import { Queue as QueueEntity } from "../entities/queue";
-import { QueueEntry } from "../entities/queueEntry";
+import { QueueEntryEntity } from "../entities/queueEntry";
 
 export default async (
   conn: Connection,
@@ -14,7 +12,7 @@ export default async (
     await conn
       .createQueryBuilder()
       .insert()
-      .into(QueueEntry)
+      .into(QueueEntryEntity)
       .values({
         resolved: false,
         queue: queueId,

@@ -1,5 +1,5 @@
-import { Queue } from "../entities/queue";
-import { QueueEntry } from "../entities/queueEntry";
+import { QueueEntity } from "../entities/queue";
+import { QueueEntryEntity } from "../entities/queueEntry";
 import { Connection, createConnection } from "typeorm";
 import path from "path";
 
@@ -13,7 +13,7 @@ export default async (): Promise<Connection> => {
     logging: false,
     synchronize: true,
     migrations: [path.join(__dirname, "./migrations/*")],
-    entities: [Queue, QueueEntry],
+    entities: [QueueEntity, QueueEntryEntity],
   });
   await conn.runMigrations();
   return conn;

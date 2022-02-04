@@ -1,6 +1,6 @@
 import { Connection } from "typeorm";
 import Queue from "../utilities/Queue";
-import { Queue as QueueEntity } from "../entities/queue";
+import { QueueEntity } from "../entities/queue";
 
 export default async (conn: Connection, queue: Queue) => {
   try {
