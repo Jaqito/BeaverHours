@@ -56,6 +56,10 @@
             {
               "title": "my office hours",
               "description": "Get a list of your office hours"
+            },
+            {
+              "title": "view queue <queueId>",
+              "description": "Show the list of students in the office hour queue with the given ID, or the current office hour if no ID is provided."
             }
           ]
         }
