@@ -55,7 +55,17 @@ export default class Queue {
     this.entries.splice(this.getQueuePosition(idToRemove), 1);
   }
 
-  queueToString(): String {
+  propertiesToString(): string {
+    return (
+      `<b>id</b>        ${this.properties.id}\n\n` +
+      `<b>ownerId</b>   ${this.properties.ownerId}\n\n` +
+      `<b>channelId</b> ${this.properties.channelId}\n\n` +
+      `<b>status</b>    ${this.properties.status}\n\n` +
+      `<b>at</b>        ${this.properties.startTime}`
+    );
+  }
+
+  entriesToString(): String {
     var queueString: String = "[";
     this.entries.forEach(function (student) {
       if (queueString.length != 1) {

@@ -72,11 +72,7 @@ export class TeamsBot extends TeamsActivityHandler {
             this.activeQueue.updateId(queue.id);
             await context.sendActivity(
               "<b>Started new Queue<b>\n\n" +
-                `<b>id</b>        ${this.activeQueue.properties.id}\n\n` +
-                `<b>ownerId</b>   ${this.activeQueue.properties.ownerId}\n\n` +
-                `<b>channelId</b> ${this.activeQueue.properties.channelId}\n\n` +
-                `<b>status</b>    ${this.activeQueue.properties.status}\n\n` +
-                `<b>at</b>        ${this.activeQueue.properties.startTime}`
+                this.activeQueue.propertiesToString()
             );
           }
           break;
@@ -118,7 +114,7 @@ export class TeamsBot extends TeamsActivityHandler {
               replyActivity.entities = [mention];
               await context.sendActivity(replyActivity);
               await context.sendActivity(
-                `Current queue: ${this.activeQueue.queueToString()}`
+                `Current queue: ${this.activeQueue.entriesToString()}`
               );
             }
           } else {
@@ -146,7 +142,7 @@ export class TeamsBot extends TeamsActivityHandler {
               replyActivity.entities = [mention];
               await context.sendActivity(replyActivity);
               await context.sendActivity(
-                `Current queue: ${this.activeQueue.queueToString()}`
+                `Current queue: ${this.activeQueue.entriesToString()}`
               );
             }
           } else {
