@@ -94,30 +94,30 @@ export function NewRow(name: string) {
       scheduler.updateSchedule({
         ...scheduler.state,
         [dayOfWeek]: {
-            startAt: event.target.value,
-            endAt: scheduler.state[dayOfWeek]?.endAt,
-            repeated: scheduler.state[dayOfWeek]?.repeated,
-        } as DaySchedule
+          startAt: event.target.value,
+          endAt: scheduler.state[dayOfWeek]?.endAt,
+          repeated: scheduler.state[dayOfWeek]?.repeated,
+        } as DaySchedule,
       });
     } else if (fieldname === "endAt") {
       console.log("edited endAt for" + dayOfWeek);
       scheduler.updateSchedule({
-          ...scheduler.state,
-          [dayOfWeek]: {
+        ...scheduler.state,
+        [dayOfWeek]: {
           startAt: scheduler.state[dayOfWeek]?.startAt,
           endAt: event.target.value,
           repeated: scheduler.state[dayOfWeek]?.repeated,
-          } as DaySchedule
+        } as DaySchedule,
       });
     } else if (fieldname === "repeated") {
       console.log("edited repeated for" + dayOfWeek);
       scheduler.updateSchedule({
-          ...scheduler.state,
-          [dayOfWeek]: {
-            startAt: scheduler.state[dayOfWeek]?.startAt,
-            endAt: scheduler.state[dayOfWeek]?.endAt,
-            repeated: event.target.value,
-          } as DaySchedule
+        ...scheduler.state,
+        [dayOfWeek]: {
+          startAt: scheduler.state[dayOfWeek]?.startAt,
+          endAt: scheduler.state[dayOfWeek]?.endAt,
+          repeated: event.target.value,
+        } as DaySchedule,
       });
     }
   };
