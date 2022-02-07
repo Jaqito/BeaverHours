@@ -1,4 +1,10 @@
-import React from "react";
+import { createContext, useContext, useState } from "react";
+
+const ScheduleContext = createContext({
+  state: {} as OfficeHoursSchedule,
+  updateSchedule: (newSchedule: OfficeHoursSchedule) => {},
+});
+
 export function Scheduler() {
   return <ScheduleForm />;
 }
@@ -20,135 +26,133 @@ interface OfficeHoursSchedule {
   Saturday?: DaySchedule;
 }
 
-class ScheduleForm extends React.Component<{}, OfficeHoursSchedule> {
-  constructor(props: any) {
-    super(props);
-    this.state = {
-      Sunday: {} as DaySchedule,
-      Monday: {} as DaySchedule,
-      Tuesday: {} as DaySchedule,
-      Wednesday: {} as DaySchedule,
-      Thursday: {} as DaySchedule,
-      Friday: {} as DaySchedule,
-      Saturday: {} as DaySchedule,
-    } as OfficeHoursSchedule;
+export function ScheduleForm() {
+  const [state, setSchedule] = useState({
+    Sunday: {} as DaySchedule,
+    Monday: {} as DaySchedule,
+    Tuesday: {} as DaySchedule,
+    Wednesday: {} as DaySchedule,
+    Thursday: {} as DaySchedule,
+    Friday: {} as DaySchedule,
+    Saturday: {} as DaySchedule,
+  } as OfficeHoursSchedule);
 
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-  }
+  const updateSchedule = (newSchedule: OfficeHoursSchedule) => {
+    setSchedule(newSchedule);
+  };
+  const value = { state, updateSchedule };
 
-  handleChange(event: any) {
+  const HandleSubmit = (event: any) => {
+    console.log("A schedule was submitted:\n", state);
+    event.preventDefault();
+  };
+
+  return (
+    <ScheduleContext.Provider value={value}>
+      <form onSubmit={HandleSubmit}>
+        <GenerateWeekTable />
+        <input type="submit" value="submit" />
+      </form>
+    </ScheduleContext.Provider>
+  );
+}
+
+export function GenerateWeekTable() {
+  return (
+    <table>
+      <thead>
+        <tr>
+          <th></th>
+          <th>Start At:</th>
+          <th>End At:</th>
+          <th>Repeat for:</th>
+        </tr>
+      </thead>
+      <tbody>
+        {NewRow("Sunday")}
+        {NewRow("Monday")}
+        {NewRow("Tuesday")}
+        {NewRow("Wednesday")}
+        {NewRow("Thursday")}
+        {NewRow("Friday")}
+        {NewRow("Saturday")}
+      </tbody>
+    </table>
+  );
+}
+
+export function NewRow(name: string) {
+  const scheduler = useContext(ScheduleContext);
+
+  const HandleChange = (event: any) => {
     event.persist();
     var splitname = event.target.name.split("-");
     var dayOfWeek = splitname[0];
     var fieldname = splitname[1];
     if (fieldname === "startAt") {
       console.log("edited startAt for" + dayOfWeek);
-      this.setState((state) => {
-        return {
-          [dayOfWeek]: {
+      scheduler.updateSchedule({
+        ...scheduler.state,
+        [dayOfWeek]: {
             startAt: event.target.value,
-            endAt: state[dayOfWeek]?.endAt,
-            repeated: state[dayOfWeek]?.repeated,
-          },
-        };
+            endAt: scheduler.state[dayOfWeek]?.endAt,
+            repeated: scheduler.state[dayOfWeek]?.repeated,
+        } as DaySchedule
       });
     } else if (fieldname === "endAt") {
       console.log("edited endAt for" + dayOfWeek);
-      this.setState((state) => {
-        return {
+      scheduler.updateSchedule({
+          ...scheduler.state,
           [dayOfWeek]: {
-            startAt: state[dayOfWeek]?.startAt,
-            endAt: event.target.value,
-            repeated: state[dayOfWeek]?.repeated,
-          },
-        };
+          startAt: scheduler.state[dayOfWeek]?.startAt,
+          endAt: event.target.value,
+          repeated: scheduler.state[dayOfWeek]?.repeated,
+          } as DaySchedule
       });
     } else if (fieldname === "repeated") {
       console.log("edited repeated for" + dayOfWeek);
-      this.setState((state) => {
-        return {
+      scheduler.updateSchedule({
+          ...scheduler.state,
           [dayOfWeek]: {
-            startAt: state[dayOfWeek]?.startAt,
-            endAt: state[dayOfWeek]?.endAt,
+            startAt: scheduler.state[dayOfWeek]?.startAt,
+            endAt: scheduler.state[dayOfWeek]?.endAt,
             repeated: event.target.value,
-          },
-        };
+          } as DaySchedule
       });
     }
-  }
+  };
 
-  handleSubmit(event: any) {
-    console.log("A schedule was submitted:\n", this.state);
-    event.preventDefault();
-  }
+  return (
+    <tr>
+      <th>{name}</th>
+      <td>
+        <input
+          type="time"
+          name={name + "-startAt"}
+          onChange={HandleChange}
+        ></input>
+      </td>
+      <td>
+        <input
+          type="time"
+          name={name + "-endAt"}
+          onChange={HandleChange}
+        ></input>
+      </td>
+      <td>
+        <input
+          type="number"
+          name={name + "-repeated"}
+          min={1}
+          onChange={HandleChange}
+        ></input>{" "}
+        weeks
+      </td>
+      {/* <td><input type="button" onClick={(e) => addRow(name)}>Add time</input></td> */}
+    </tr>
+  );
+}
 
-  render() {
-    return (
-      <form onSubmit={this.handleSubmit}>
-        {this.genereateWeekTable()}
-        <input type="submit" value="Submit" />
-      </form>
-    );
-  }
-
-  genereateWeekTable() {
-    return (
-      <table>
-        <thead>
-          <tr>
-            <th></th>
-            <th>Start At:</th>
-            <th>End At:</th>
-            <th>Repeat for:</th>
-          </tr>
-        </thead>
-        <tbody>
-          {this.newRow("Sunday")}
-          {this.newRow("Monday")}
-          {this.newRow("Tuesday")}
-          {this.newRow("Wednesday")}
-          {this.newRow("Thursday")}
-          {this.newRow("Friday")}
-          {this.newRow("Saturday")}
-        </tbody>
-      </table>
-    );
-  }
-
-  newRow(name: string) {
-    return (
-      <tr>
-        <th>{name}</th>
-        <td>
-          <input
-            type="time"
-            name={name + "-startAt"}
-            onChange={this.handleChange}
-          ></input>
-        </td>
-        <td>
-          <input
-            type="time"
-            name={name + "-endAt"}
-            onChange={this.handleChange}
-          ></input>
-        </td>
-        <td>
-          <input
-            type="number"
-            name={name + "-repeated"}
-            min={1}
-            onChange={this.handleChange}
-          ></input>{" "}
-          weeks
-        </td>
-        {/* <td><input type="button" onClick={(e) => addRow(name)}>Add time</input></td> */}
-      </tr>
-    );
-  }
-
-  addRow(name: string) {
-    this.newRow(name);
-  }
+export function AddRow(name: string) {
+  return NewRow(name);
 }
