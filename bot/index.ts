@@ -1,6 +1,8 @@
 // Load environment variables from file if not in prod
+import "reflect-metadata"; // We need this in order to use @Decorators
 import path from "path";
 import dotenv from "dotenv";
+import typeormLoader from "./loaders/typeorm";
 if (process.env.NODE_ENV !== "production") {
   const ENV_FILE = path.join(__dirname, ".env.teamsfx.local");
   dotenv.config({ path: ENV_FILE });
@@ -49,14 +51,20 @@ const onTurnErrorHandler = async (context: TurnContext, error: Error) => {
 
 // Set the onTurnError for the singleton BotFrameworkAdapter.
 adapter.onTurnError = onTurnErrorHandler;
+let bot: TeamsBot;
 
 // Create the bot that will handle incoming messages.
-const bot = new TeamsBot();
 
 // Create HTTP server.
 const server = restify.createServer();
-server.listen(process.env.port || process.env.PORT || 3978, () => {
-  console.log(`\nBot Started, ${server.name} listening to ${server.url}`);
+server.listen(process.env.port || process.env.PORT || 3978, async () => {
+  try {
+    const conn = await typeormLoader();
+    bot = new TeamsBot(conn);
+    console.log(`\nBot Started, ${server.name} listening to ${server.url}`);
+  } catch (e) {
+    console.log(e);
+  }
 });
 
 // Listen for incoming requests.
