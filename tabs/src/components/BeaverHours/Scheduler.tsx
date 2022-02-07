@@ -1,4 +1,5 @@
 import { createContext, useContext, useState } from "react";
+import "./Scheduler.css";
 
 const ScheduleContext = createContext({
   state: {} as OfficeHoursSchedule,
@@ -49,10 +50,13 @@ export function ScheduleForm() {
 
   return (
     <ScheduleContext.Provider value={value}>
-      <form onSubmit={HandleSubmit}>
-        <GenerateWeekTable />
-        <input type="submit" value="submit" />
-      </form>
+      <div id="table-title"><h1>BeaverHours Scheduler</h1></div>
+      <div id="form-container">
+        <form onSubmit={HandleSubmit}>
+          <GenerateWeekTable />
+          <div id="submit-container"><input type="submit" value="submit" /></div>
+        </form>
+      </div>
     </ScheduleContext.Provider>
   );
 }
