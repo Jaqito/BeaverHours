@@ -1,16 +1,17 @@
 h1 {
-    width: 50%;
-    margin: auto;
+  width: 50%;
+  margin: auto;
 }
 
-#form-container, #table-title {
-    width: 75%;
-    margin: auto;
-    padding-top: 25px;
+#form-container,
+#table-title {
+  width: 75%;
+  margin: auto;
+  padding-top: 25px;
 }
 
 #submit-container {
-    width: 100px;
-    margin: auto;
-    padding-top: 25px;
+  width: 100px;
+  margin: auto;
+  padding-top: 25px;
 }
