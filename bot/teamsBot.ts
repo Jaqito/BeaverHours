@@ -1,20 +1,18 @@
-import { AdaptiveCards } from "@microsoft/adaptivecards-tools";
 import { default as axios } from "axios";
+import * as querystring from "querystring";
 import {
-  AdaptiveCardInvokeResponse,
-  AdaptiveCardInvokeValue,
-  CardFactory,
   TeamsActivityHandler,
+  CardFactory,
   TurnContext,
+  AdaptiveCardInvokeValue,
+  AdaptiveCardInvokeResponse,
   MessageFactory,
 } from "botbuilder";
-import * as querystring from "querystring";
-import { Connection } from "typeorm";
-import rawLearnCard from "./adaptiveCards/learn.json";
 import rawWelcomeCard from "./adaptiveCards/welcome.json";
-import addQueueEntryToDb from "./api/addQueueEntryToDb";
-import addQueueToDb from "./api/addQueueToDb";
+import rawLearnCard from "./adaptiveCards/learn.json";
+import { AdaptiveCards } from "@microsoft/adaptivecards-tools";
 import Queue from "./utilities/Queue";
+import DbConnection from "./utilities/DbConnection";
 
 export interface DataInterface {
   likeCount: number;
@@ -24,13 +22,28 @@ export class TeamsBot extends TeamsActivityHandler {
   // record the likeCount
   likeCountObj: { likeCount: number };
   activeQueue: Queue;
-  dbConnection: Connection;
 
-  constructor(dbConnection: Connection) {
+  constructor() {
     super();
-    this.dbConnection = dbConnection;
+
     this.likeCountObj = { likeCount: 0 };
     this.activeQueue = null;
+
+    const sqlConfig = {
+      user: process.env.SQL_USER_NAME,
+      password: process.env.SQL_PASSWORD,
+      database: process.env.SQL_DATABASE_NAME,
+      server: process.env.SQL_ENDPOINT,
+      pool: {
+        max: 10,
+        min: 0,
+        idleTimeoutMillis: 30000,
+      },
+      options: {
+        encrypt: true, // for azure
+        trustServerCertificate: false, // change to true for local dev / self-signed certs
+      },
+    };
 
     this.onMessage(async (context, next) => {
       console.log("Running with Message Activity.");
@@ -61,15 +74,14 @@ export class TeamsBot extends TeamsActivityHandler {
               'Office hour already in progress. End active office hour with the command "end office hour"'
             );
           } else {
-            this.activeQueue = new Queue({
-              ownerId: context.activity.from.id,
-              channelId: context.activity.channelId,
-            });
-            const queue = await addQueueToDb(
-              this.dbConnection,
-              this.activeQueue
+            this.activeQueue = new Queue(
+              {
+                ownerId: context.activity.from.id,
+                channelId: context.activity.channelId,
+              },
+              new DbConnection()
             );
-            this.activeQueue.updateId(queue.id);
+            await this.activeQueue.initializeStorage(sqlConfig);
             await context.sendActivity(
               "<b>Started new Queue<b>\n\n" +
                 `<b>id</b>        ${this.activeQueue.properties.id}\n\n` +
@@ -102,11 +114,6 @@ export class TeamsBot extends TeamsActivityHandler {
               await context.sendActivity(replyActivity);
             } else {
               this.activeQueue.enqueueStudent(context.activity.from.id);
-              await addQueueEntryToDb(
-                this.dbConnection,
-                context.activity.from.id,
-                this.activeQueue.properties.id
-              );
               const replyActivity = MessageFactory.text(
                 `Hello ${
                   mention.text

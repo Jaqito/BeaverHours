@@ -1,3 +1,11 @@
+export interface Storage {
+  connect?(config): void;
+  select(destination: string, filter?);
+  insert(destination: string, value);
+  update(destination: string, oldValue, newValue);
+  delete(destination: string, filter);
+}
+
 export enum UserRole {
   Student = "STUDENT",
   Instructor = "INSTRUCTOR",

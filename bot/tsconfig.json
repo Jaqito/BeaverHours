@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "experimentalDecorators": true,
     "declaration": true,
     "target": "es2016",
     "module": "commonjs",
@@ -10,7 +9,6 @@
     "incremental": true,
     "tsBuildInfoFile": "./lib/.tsbuildinfo",
     "resolveJsonModule": true,
-    "esModuleInterop": true,
-    "emitDecoratorMetadata": true
+    "esModuleInterop": true
   }
 }
