@@ -58,20 +58,7 @@
             ]
         }
     ],
-    "composeExtensions": [
-        {
-            "botId": "{{localSettings.bot.botId}}",
-            "commands": [],
-            "messageHandlers": [
-                {
-                    "type": "link",
-                    "value": {
-                        "domains": ["*.botframework.com"]
-                    }
-                }
-            ]
-        }
-    ],
+
     "configurableTabs": [
         {
             "configurationUrl": "{{{localSettings.frontend.tabEndpoint}}}/index.html#/config",
