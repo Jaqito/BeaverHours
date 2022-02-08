@@ -1,155 +1,97 @@
 {
-  "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.11/MicrosoftTeams.schema.json",
-  "manifestVersion": "1.11",
-  "version": "1.0.0",
-  "id": "{{localSettings.teamsApp.teamsAppId}}",
-  "packageName": "com.microsoft.teams.extension",
-  "developer": {
-    "name": "Teams App, Inc.",
-    "websiteUrl": "{{{localSettings.frontend.tabEndpoint}}}",
-    "privacyUrl": "{{{localSettings.frontend.tabEndpoint}}}/index.html#/privacy",
-    "termsOfUseUrl": "{{{localSettings.frontend.tabEndpoint}}}/index.html#/termsofuse"
-  },
-  "icons": {
-    "color": "resources/color.png",
-    "outline": "resources/outline.png"
-  },
-  "name": {
-    "short": "BeaverHours-local-debug",
-    "full": "BeaverHours-local-debug"
-  },
-  "description": {
-    "short": "Short description of BeaverHours-local-debug",
-    "full": "Full description of BeaverHours-local-debug"
-  },
-  "accentColor": "#FFFFFF",
-  "bots": [
-    {
-      "botId": "{{localSettings.bot.botId}}",
-      "scopes": ["personal", "team", "groupchat"],
-      "supportsFiles": false,
-      "isNotificationOnly": false,
-      "commandLists": [
+    "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.11/MicrosoftTeams.schema.json",
+    "manifestVersion": "1.11",
+    "version": "1.0.0",
+    "id": "{{localSettings.teamsApp.teamsAppId}}",
+    "packageName": "com.microsoft.teams.extension",
+    "developer": {
+        "name": "Teams App, Inc.",
+        "websiteUrl": "{{{localSettings.frontend.tabEndpoint}}}",
+        "privacyUrl": "{{{localSettings.frontend.tabEndpoint}}}/index.html#/privacy",
+        "termsOfUseUrl": "{{{localSettings.frontend.tabEndpoint}}}/index.html#/termsofuse"
+    },
+    "icons": {
+        "color": "resources/color.png",
+        "outline": "resources/outline.png"
+    },
+    "name": {
+        "short": "BeaverHours-local-debug",
+        "full": "BeaverHours-local-debug"
+    },
+    "description": {
+        "short": "Short description of BeaverHours-local-debug",
+        "full": "Full description of BeaverHours-local-debug"
+    },
+    "accentColor": "#FFFFFF",
+    "bots": [
         {
-          "scopes": ["personal", "team", "groupchat"],
-          "commands": [
-            {
-              "title": "start office hour",
-              "description": "Start a new office hour queue"
-            },
-            {
-              "title": "end office hour",
-              "description": "End the active office hour queue"
-            },
-            {
-              "title": "join office hours",
-              "description": "Jump in queue to get help from the instructor"
-            },
-            {
-              "title": "leave office hours",
-              "description": "Leave the office hours queue"
-            },
-            {
-              "title": "get queue position",
-              "description": "Find out where you are in line"
-            }
-          ]
+            "botId": "{{localSettings.bot.botId}}",
+            "scopes": ["personal", "team", "groupchat"],
+            "supportsFiles": false,
+            "isNotificationOnly": false,
+            "commandLists": [
+                {
+                    "scopes": ["personal", "team", "groupchat"],
+                    "commands": [
+                        {
+                            "title": "start office hour",
+                            "description": "Start a new office hour queue"
+                        },
+                        {
+                            "title": "end office hour",
+                            "description": "End the active office hour queue"
+                        },
+                        {
+                            "title": "join office hours",
+                            "description": "Jump in queue to get help from the instructor"
+                        },
+                        {
+                            "title": "leave office hours",
+                            "description": "Leave the office hours queue"
+                        },
+                        {
+                            "title": "get queue position",
+                            "description": "Find out where you are in line"
+                        }
+                    ]
+                }
+            ]
         }
-      ]
-    }
-  ],
-  "composeExtensions": [
-    {
-      "botId": "{{localSettings.bot.botId}}",
-      "commands": [
+    ],
+    "composeExtensions": [
         {
-          "id": "createCard",
-          "context": ["compose"],
-          "description": "Command to run action to create a Card from Compose Box",
-          "title": "Create Card",
-          "type": "action",
-          "parameters": [
-            {
-              "name": "title",
-              "title": "Card title",
-              "description": "Title for the card",
-              "inputType": "text"
-            },
-            {
-              "name": "subTitle",
-              "title": "Subtitle",
-              "description": "Subtitle for the card",
-              "inputType": "text"
-            },
-            {
-              "name": "text",
-              "title": "Text",
-              "description": "Text for the card",
-              "inputType": "textarea"
-            }
-          ]
-        },
-        {
-          "id": "shareMessage",
-          "context": ["message"],
-          "description": "Test command to run action on message context (message sharing)",
-          "title": "Share Message",
-          "type": "action",
-          "parameters": [
-            {
-              "name": "includeImage",
-              "title": "Include Image",
-              "description": "Include image in Hero Card",
-              "inputType": "toggle"
-            }
-          ]
-        },
-        {
-          "id": "searchQuery",
-          "context": ["compose", "commandBox"],
-          "description": "Test command to run query",
-          "title": "Search",
-          "type": "query",
-          "parameters": [
-            {
-              "name": "searchQuery",
-              "title": "Search Query",
-              "description": "Your search query",
-              "inputType": "text"
-            }
-          ]
+            "botId": "{{localSettings.bot.botId}}",
+            "commands": [],
+            "messageHandlers": [
+                {
+                    "type": "link",
+                    "value": {
+                        "domains": ["*.botframework.com"]
+                    }
+                }
+            ]
         }
-      ],
-      "messageHandlers": [
+    ],
+    "configurableTabs": [
         {
-          "type": "link",
-          "value": {
-            "domains": ["*.botframework.com"]
-          }
+            "configurationUrl": "{{{localSettings.frontend.tabEndpoint}}}/index.html#/config",
+            "canUpdateConfiguration": true,
+            "scopes": ["team", "groupchat"]
         }
-      ]
+    ],
+    "staticTabs": [
+        {
+            "entityId": "index",
+            "name": "Personal Tab",
+            "contentUrl": "{{{localSettings.frontend.tabEndpoint}}}/index.html#/tab",
+            "websiteUrl": "{{{localSettings.frontend.tabEndpoint}}}/index.html#/tab",
+            "scopes": ["personal"]
+        }
+    ],
+    "permissions": ["identity", "messageTeamMembers"],
+    "validDomains": [],
+    "webApplicationInfo": {
+        "id": "{{localSettings.auth.clientId}}",
+        "resource": "{{{localSettings.auth.applicationIdUris}}}"
     }
-  ],
-  "configurableTabs": [
-    {
-      "configurationUrl": "{{{localSettings.frontend.tabEndpoint}}}/index.html#/config",
-      "canUpdateConfiguration": true,
-      "scopes": ["team", "groupchat"]
-    }
-  ],
-  "staticTabs": [
-    {
-      "entityId": "index",
-      "name": "Personal Tab",
-      "contentUrl": "{{{localSettings.frontend.tabEndpoint}}}/index.html#/tab",
-      "websiteUrl": "{{{localSettings.frontend.tabEndpoint}}}/index.html#/tab",
-      "scopes": ["personal"]
-    }
-  ],
-  "permissions": ["identity", "messageTeamMembers"],
-  "validDomains": [],
-  "webApplicationInfo": {
-    "id": "{{localSettings.auth.clientId}}",
-    "resource": "{{{localSettings.auth.applicationIdUris}}}"
-  }
 }
