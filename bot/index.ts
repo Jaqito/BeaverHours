@@ -52,15 +52,16 @@ const onTurnErrorHandler = async (context: TurnContext, error: Error) => {
 // Set the onTurnError for the singleton BotFrameworkAdapter.
 adapter.onTurnError = onTurnErrorHandler;
 let bot: TeamsBot;
-
 // Create the bot that will handle incoming messages.
 
 // Create HTTP server.
 const server = restify.createServer();
 server.listen(process.env.port || process.env.PORT || 3978, async () => {
   try {
-    const conn = await typeormLoader();
-    bot = new TeamsBot(conn);
+    if (!bot) {
+      const conn = await typeormLoader();
+      bot = new TeamsBot(conn);
+    }
     console.log(`\nBot Started, ${server.name} listening to ${server.url}`);
   } catch (e) {
     console.log(e);
@@ -70,6 +71,10 @@ server.listen(process.env.port || process.env.PORT || 3978, async () => {
 // Listen for incoming requests.
 server.post("/api/messages", async (req, res) => {
   await adapter.processActivity(req, res, async (context) => {
+    if (!bot) {
+      const conn = await typeormLoader();
+      bot = new TeamsBot(conn);
+    }
     await bot.run(context);
   });
 });
