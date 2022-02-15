@@ -13,7 +13,12 @@ import * as restify from "restify";
 
 // Import required bot services.
 // See https://aka.ms/bot-services to learn more about the different parts of a bot.
-import { BotFrameworkAdapter, TurnContext } from "botbuilder";
+import {
+  BotFrameworkAdapter,
+  ConsoleTranscriptLogger,
+  TestAdapter,
+  TurnContext,
+} from "botbuilder";
 
 // This bot's main dialog.
 import { TeamsBot } from "./teamsBot";
@@ -52,29 +57,26 @@ const onTurnErrorHandler = async (context: TurnContext, error: Error) => {
 // Set the onTurnError for the singleton BotFrameworkAdapter.
 adapter.onTurnError = onTurnErrorHandler;
 let bot: TeamsBot;
+(async function () {
+  const conn = await typeormLoader();
+  bot = new TeamsBot(conn);
+  const server = restify.createServer();
+
+  server.listen(process.env.port || process.env.PORT || 3978, async () => {
+    try {
+      console.log(`\nBot Started, ${server.name} listening to ${server.url}`);
+    } catch (e) {
+      console.log(e);
+    }
+  });
+  server.post("/api/messages", async (req, res) => {
+    await adapter.processActivity(req, res, async (context) => {
+      await bot.run(context);
+    });
+  });
+})();
 // Create the bot that will handle incoming messages.
 
 // Create HTTP server.
-const server = restify.createServer();
-server.listen(process.env.port || process.env.PORT || 3978, async () => {
-  try {
-    if (!bot) {
-      const conn = await typeormLoader();
-      bot = new TeamsBot(conn);
-    }
-    console.log(`\nBot Started, ${server.name} listening to ${server.url}`);
-  } catch (e) {
-    console.log(e);
-  }
-});
 
 // Listen for incoming requests.
-server.post("/api/messages", async (req, res) => {
-  await adapter.processActivity(req, res, async (context) => {
-    if (!bot) {
-      const conn = await typeormLoader();
-      bot = new TeamsBot(conn);
-    }
-    await bot.run(context);
-  });
-});
