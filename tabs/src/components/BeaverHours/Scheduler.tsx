@@ -1,6 +1,7 @@
 import { WeekTable } from "./WeekTable";
 import { createContext, useState } from "react";
 import { OfficeHoursSchedule, DaySchedule } from "./SchedulerIntefaces";
+import "./Scheduler.css";
 
 export const ScheduleContext = createContext({
   state: {} as OfficeHoursSchedule,
@@ -30,10 +31,13 @@ export function ScheduleForm() {
 
   return (
     <ScheduleContext.Provider value={value}>
-      <form onSubmit={HandleSubmit}>
-        <WeekTable />
-        <input type="submit" value="submit" />
-      </form>
+      <div id="table-title"><h1>BeaverHours Scheduler</h1></div>
+      <div id="form-container">
+        <form onSubmit={HandleSubmit}>
+          <WeekTable />
+          <div id="submit-container"><input type="submit" value="Submit" /></div>
+        </form>
+      </div>
     </ScheduleContext.Provider>
   );
 }

@@ -2,7 +2,7 @@ import { WeekTableRow } from "./WeekTableRow";
 
 export function WeekTable() {
   return (
-    <table>
+    <table id="form-table">
       <thead>
         <tr>
           <th></th>

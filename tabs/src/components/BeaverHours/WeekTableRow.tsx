@@ -65,6 +65,7 @@ export const WeekTableRow: React.FC<WeekTableRowProps> = (props) => {
           type="number"
           name={props.dayOfWeek + "-repeated"}
           min={1}
+          className="num-input"
           onChange={HandleChange}
         ></input>{" "}
         weeks
