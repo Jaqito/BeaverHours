@@ -31,11 +31,15 @@ export function ScheduleForm() {
 
   return (
     <ScheduleContext.Provider value={value}>
-      <div id="table-title"><h1>BeaverHours Scheduler</h1></div>
+      <div id="table-title">
+        <h1>BeaverHours Scheduler</h1>
+      </div>
       <div id="form-container">
         <form onSubmit={HandleSubmit}>
           <WeekTable />
-          <div id="submit-container"><input type="submit" value="Submit" /></div>
+          <div id="submit-container">
+            <input type="submit" value="Submit" />
+          </div>
         </form>
       </div>
     </ScheduleContext.Provider>

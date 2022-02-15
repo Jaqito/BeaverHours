@@ -16,5 +16,5 @@ export interface OfficeHoursSchedule {
 }
 
 export interface WeekTableRowProps {
-    dayOfWeek: string;
+  dayOfWeek: string;
 }

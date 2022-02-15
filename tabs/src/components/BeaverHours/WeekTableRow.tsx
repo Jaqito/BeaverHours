@@ -72,4 +72,4 @@ export const WeekTableRow: React.FC<WeekTableRowProps> = (props) => {
       </td>
     </tr>
   );
-}
+};
