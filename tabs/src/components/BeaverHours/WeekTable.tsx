@@ -12,13 +12,13 @@ export function WeekTable() {
         </tr>
       </thead>
       <tbody>
-        {WeekTableRow({dayOfWeek : "Sunday"})}
-        {WeekTableRow({dayOfWeek : "Monday"})}
-        {WeekTableRow({dayOfWeek : "Tuesday"})}
-        {WeekTableRow({dayOfWeek : "Wednesday"})}
-        {WeekTableRow({dayOfWeek : "Thursday"})}
-        {WeekTableRow({dayOfWeek : "Friday"})}
-        {WeekTableRow({dayOfWeek : "Saturday"})}
+        <WeekTableRow dayOfWeek="Sunday" />
+        <WeekTableRow dayOfWeek="Monday" />
+        <WeekTableRow dayOfWeek="Tuesday" />
+        <WeekTableRow dayOfWeek="Wednesday" />
+        <WeekTableRow dayOfWeek="Thursday" />
+        <WeekTableRow dayOfWeek="Friday" />
+        <WeekTableRow dayOfWeek="Saturday" />
       </tbody>
     </table>
   );
