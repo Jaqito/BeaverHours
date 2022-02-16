@@ -1,0 +1,25 @@
+#table-title {
+  text-align: center;
+  margin: auto;
+  width: 60%;
+  padding: 10px;
+}
+
+#form-container {
+  width: 60%;
+  margin: auto;
+}
+
+#submit-container {
+  width: 75px;
+  margin: auto;
+  padding-top: 20px;
+}
+
+.num-input {
+  width: 3em;
+}
+
+#form-table {
+  margin: auto;
+}
