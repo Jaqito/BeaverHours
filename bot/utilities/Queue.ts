@@ -83,6 +83,9 @@ export default class Queue {
   }
 
   entriesToString(): string {
+    if (this.entries.length == 0) {
+      return `No queue entries in queue ${this.properties.id}`;
+    }
     const entryStrings = this.entries.map((entry) => entry.toString());
     return "[" + entryStrings.join(",") + "]";
   }
