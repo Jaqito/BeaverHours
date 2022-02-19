@@ -1,4 +1,7 @@
-import { QueueProperties, QueueEntry, QueueStatus } from "./Global";
+import QueueEntry from "./QueueEntry";
+import { QueueProperties, QueueStatus } from "./Global";
+import { QueueEntity } from "../entities/queue";
+import { QueueEntryEntity } from "../entities/queueEntry";
 
 export default class Queue {
   properties: QueueProperties;
@@ -13,6 +16,16 @@ export default class Queue {
   }: QueueProperties) {
     this.properties = { id, ownerId, channelId, startTime, status };
     this.entries = [];
+  }
+
+  static fromQueueEntity(queueEntity: QueueEntity): Queue {
+    return new Queue({
+      id: queueEntity.id,
+      ownerId: queueEntity.ownerId,
+      channelId: queueEntity.channelId,
+      startTime: new Date(queueEntity.startTime),
+      status: queueEntity.status as QueueStatus,
+    });
   }
 
   updateId(queueId: number) {
@@ -38,16 +51,20 @@ export default class Queue {
     return this.entries.indexOf(this.findStudent(idToGet));
   }
 
-  enqueueStudent(idToAdd: string): void {
-    const studentToAdd: QueueEntry = {
-      id: Math.random() * 1000,
+  enqueueQueueEntryEntity(queueEntryEntity: QueueEntryEntity) {
+    const newEntry = QueueEntry.fromQueueEntryEntity(queueEntryEntity);
+    newEntry.setQueueId(this.properties.id);
+    this.entries.push(newEntry);
+  }
+
+  enqueueStudentById(idToAdd: string): void {
+    const studentToAdd = new QueueEntry({
+      id: null,
       userId: idToAdd,
       queueId: this.properties.id,
       question: "",
       resolved: false,
-      createdAt: new Date(Date.now()),
-      // leaving updatedAt for post-creation updates only
-    };
+    });
     this.entries.push(studentToAdd);
   }
 
@@ -55,20 +72,21 @@ export default class Queue {
     this.entries.splice(this.getQueuePosition(idToRemove), 1);
   }
 
-  queueToString(): String {
-    var queueString: String = "[";
-    this.entries.forEach(function (student) {
-      if (queueString.length != 1) {
-        queueString += ",";
-      }
+  propertiesToString(): string {
+    return (
+      `\n\n           id: ${this.properties.id}\n` +
+      `      ownerId: ${this.properties.ownerId}\n` +
+      `    channelId: ${this.properties.channelId}\n` +
+      `       status: ${this.properties.status}\n` +
+      `           at: ${this.properties.startTime}`
+    );
+  }
 
-      queueString += `{id: ${student.id},
-          userId: ${student.userId},
-          resolved: ${student.resolved}, 
-          createdAt: ${student.createdAt},
-          updatedAt: ${student.updatedAt ?? ""}}`;
-    });
-    queueString += "]";
-    return queueString;
+  entriesToString(): string {
+    if (this.entries.length == 0) {
+      return `No queue entries in queue ${this.properties.id}`;
+    }
+    const entryStrings = this.entries.map((entry) => entry.toString());
+    return "[" + entryStrings.join(",") + "]";
   }
 }

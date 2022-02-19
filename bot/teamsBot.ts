@@ -9,6 +9,8 @@ import * as querystring from "querystring";
 import { Connection } from "typeorm";
 import addQueueEntryToDb from "./api/addQueueEntryToDb";
 import addQueueToDb from "./api/addQueueToDb";
+import fetchQueuesByOwner from "./api/fetchQueuesByOwner";
+import fetchQueueEntriesByQueueId from "./api/fetchQueueEntriesByQueueId";
 import Queue from "./utilities/Queue";
 
 export interface DataInterface {
@@ -67,11 +69,7 @@ export class TeamsBot extends TeamsActivityHandler {
             this.activeQueue.updateId(queue.id);
             await context.sendActivity(
               "<b>Started new Queue<b>\n\n" +
-                `<b>id</b>        ${this.activeQueue.properties.id}\n\n` +
-                `<b>ownerId</b>   ${this.activeQueue.properties.ownerId}\n\n` +
-                `<b>channelId</b> ${this.activeQueue.properties.channelId}\n\n` +
-                `<b>status</b>    ${this.activeQueue.properties.status}\n\n` +
-                `<b>at</b>        ${this.activeQueue.properties.startTime}`
+                this.activeQueue.propertiesToString()
             );
           }
           break;
@@ -96,12 +94,12 @@ export class TeamsBot extends TeamsActivityHandler {
               replyActivity.entities = [mention];
               await context.sendActivity(replyActivity);
             } else {
-              this.activeQueue.enqueueStudent(context.activity.from.id);
-              await addQueueEntryToDb(
+              const queueEntryEntity = await addQueueEntryToDb(
                 this.dbConnection,
                 context.activity.from.id,
                 this.activeQueue.properties.id
               );
+              this.activeQueue.enqueueQueueEntryEntity(queueEntryEntity);
               const replyActivity = MessageFactory.text(
                 `Hello ${
                   mention.text
@@ -113,7 +111,7 @@ export class TeamsBot extends TeamsActivityHandler {
               replyActivity.entities = [mention];
               await context.sendActivity(replyActivity);
               await context.sendActivity(
-                `Current queue: ${this.activeQueue.queueToString()}`
+                `Current queue: ${this.activeQueue.entriesToString()}`
               );
             }
           } else {
@@ -141,7 +139,7 @@ export class TeamsBot extends TeamsActivityHandler {
               replyActivity.entities = [mention];
               await context.sendActivity(replyActivity);
               await context.sendActivity(
-                `Current queue: ${this.activeQueue.queueToString()}`
+                `Current queue: ${this.activeQueue.entriesToString()}`
               );
             }
           } else {
@@ -180,6 +178,56 @@ export class TeamsBot extends TeamsActivityHandler {
             );
           }
           break;
+        }
+        case "my office hours": {
+          const queues = await fetchQueuesByOwner(
+            this.dbConnection,
+            context.activity.from.id,
+            context.activity.channelId
+          );
+          const queueObjects = queues.map((queueEntity) =>
+            Queue.fromQueueEntity(queueEntity)
+          );
+          queueObjects.forEach(
+            async (queue) =>
+              await context.sendActivity(queue.propertiesToString())
+          );
+          break;
+        }
+      }
+
+      if (txt.startsWith("view queue")) {
+        try {
+          const queueIdString: string = txt.replace("view queue", "").trim();
+          if (queueIdString === "") {
+            if (this.activeQueue) {
+              await context.sendActivity(this.activeQueue.entriesToString());
+            } else {
+              await context.sendActivity(
+                'No office hour currently active. Did you mean "view queue (queueId)"?'
+              );
+            }
+          } else {
+            const queueId = Number(queueIdString);
+            if (isNaN(queueId)) {
+              await context.sendActivity(
+                'Provided queue ID is not a valid integer. Please provide a valid integer for the command "view queue (queueId)".'
+              );
+            } else {
+              const queueEntryEntities = await fetchQueueEntriesByQueueId(
+                this.dbConnection,
+                queueId
+              );
+              const tempQueue = new Queue({ id: queueId });
+              queueEntryEntities.forEach((queueEntryEntity) => {
+                tempQueue.enqueueQueueEntryEntity(queueEntryEntity);
+              });
+              await context.sendActivity(tempQueue.entriesToString());
+            }
+          }
+        } catch (e) {
+          console.error('Error performing command "view queue"\n' + e);
+          throw e;
         }
       }
 

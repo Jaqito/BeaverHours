@@ -1,7 +1,5 @@
 import { Connection } from "typeorm";
-import Queue from "../utilities/Queue";
-import { Queue as QueueEntity } from "../entities/queue";
-import { QueueEntry } from "../entities/queueEntry";
+import { QueueEntryEntity } from "../entities/queueEntry";
 
 export default async (
   conn: Connection,
@@ -11,10 +9,10 @@ export default async (
 ) => {
   console.log(userId, queueId);
   try {
-    await conn
+    const result = await conn
       .createQueryBuilder()
       .insert()
-      .into(QueueEntry)
+      .into(QueueEntryEntity)
       .values({
         resolved: false,
         queue: queueId,
@@ -22,6 +20,7 @@ export default async (
         question: question ? question : null, //if no question insert null into db.
       })
       .execute();
+    return result.raw[0];
   } catch (e) {
     console.log("Failed to add Queue to Database", e);
     throw e;
