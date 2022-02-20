@@ -4,17 +4,15 @@ export default class QueueEntry {
   id: number;
   userId: string;
   queueId: number;
-  privateEntry: boolean;
   question: string;
   resolved: boolean;
   createdAt: Date;
   updatedAt: Date;
 
-  constructor({ id, userId, queueId, privateEntry, question, resolved }) {
+  constructor({ id, userId, queueId, question, resolved }) {
     this.id = id;
     this.userId = userId;
     this.queueId = queueId;
-    this.privateEntry = privateEntry;
     this.question = question;
     this.resolved = resolved;
   }
@@ -27,8 +25,7 @@ export default class QueueEntry {
     const entry = new QueueEntry({
       id: queueEntryEntity.id,
       userId: queueEntryEntity.userId,
-      queueId: queueEntryEntity.queue,
-      privateEntry: queueEntryEntity.privateEntry,
+      queueId: null,
       question: queueEntryEntity.question,
       resolved: queueEntryEntity.resolved,
     });
@@ -43,7 +40,6 @@ export default class QueueEntry {
       `      queueId: ${this.queueId},\n` +
       `       userId: ${this.userId},\n` +
       `     question: ${this.question},\n` +
-      `     private:  ${this.privateEntry},\n` +
       `     resolved: ${this.resolved},\n` +
       `    createdAt: ${this.createdAt ?? ""},\n` +
       `    updatedAt: ${this.updatedAt ?? ""}\n`
