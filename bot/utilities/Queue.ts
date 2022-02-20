@@ -3,6 +3,11 @@ import { QueueProperties, QueueStatus } from "./Global";
 import { QueueEntity } from "../entities/queue";
 import { QueueEntryEntity } from "../entities/queueEntry";
 
+interface enqueueOptions {
+  privateEntry?: boolean;
+  question?: string;
+}
+
 export default class Queue {
   properties: QueueProperties;
   entries: Array<QueueEntry>;
@@ -53,16 +58,16 @@ export default class Queue {
 
   enqueueQueueEntryEntity(queueEntryEntity: QueueEntryEntity) {
     const newEntry = QueueEntry.fromQueueEntryEntity(queueEntryEntity);
-    newEntry.setQueueId(this.properties.id);
     this.entries.push(newEntry);
   }
 
-  enqueueStudentById(idToAdd: string): void {
+  enqueueStudentById(idToAdd: string, options?: enqueueOptions): void {
     const studentToAdd = new QueueEntry({
       id: null,
       userId: idToAdd,
       queueId: this.properties.id,
-      question: "",
+      privateEntry: options.privateEntry ?? false,
+      question: options.question ?? "",
       resolved: false,
     });
     this.entries.push(studentToAdd);
