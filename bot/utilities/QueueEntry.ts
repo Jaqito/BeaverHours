@@ -38,6 +38,7 @@ export default class QueueEntry {
   }
 
   toString(showPrivate: boolean = false): string {
+    // prettier-ignore
     return (
       `\n\n           id: ${this.id},\n` +
       `      queueId: ${this.queueId},\n` +
