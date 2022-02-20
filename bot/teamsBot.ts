@@ -85,6 +85,44 @@ export class TeamsBot extends TeamsActivityHandler {
           }
           break;
         }
+        case "join office hours": {
+          if (this.activeQueue) {
+            if (this.activeQueue.checkQueue(context.activity.from.id)) {
+              const replyActivity = MessageFactory.text(
+                `Hello ${mention.text}! You are already in queue.`
+              );
+              replyActivity.entities = [mention];
+              await context.sendActivity(replyActivity);
+            } else {
+              const queueEntryEntity = await addQueueEntryToDb(
+                this.dbConnection,
+                context.activity.from.id,
+                this.activeQueue.properties.id
+              );
+              this.activeQueue.enqueueQueueEntryEntity(queueEntryEntity);
+              const replyActivity = MessageFactory.text(
+                `Hello ${
+                  mention.text
+                }! You have entered the office hours queue, the instructor will get to you! You are in position ${
+                  this.activeQueue.getQueuePosition(context.activity.from.id) +
+                  1
+                }.`
+              );
+              replyActivity.entities = [mention];
+              await context.sendActivity(replyActivity);
+              await context.sendActivity(
+                `Current queue: ${this.activeQueue.entriesToString()}`
+              );
+            }
+          } else {
+            const replyActivity = MessageFactory.text(
+              `Hello ${mention.text}! Currently no office hours being held. Please check the schedule to confirm the next office hours session!`
+            );
+            replyActivity.entities = [mention];
+            await context.sendActivity(replyActivity);
+          }
+          break;
+        }
         case "leave office hours": {
           if (this.activeQueue) {
             if (!this.activeQueue.checkQueue(context.activity.from.id)) {
@@ -189,100 +227,6 @@ export class TeamsBot extends TeamsActivityHandler {
           }
         } catch (e) {
           console.error('Error performing command "view queue"\n' + e);
-          throw e;
-        }
-      }
-
-      if (txt.startsWith("private join office hours")) {
-        try {
-          const question: string = txt
-            .replace("private join office hours", "")
-            .trim();
-          if (this.activeQueue) {
-            if (this.activeQueue.checkQueue(context.activity.from.id)) {
-              const replyActivity = MessageFactory.text(
-                `Hello ${mention.text}! You are already in queue.`
-              );
-              replyActivity.entities = [mention];
-              await context.sendActivity(replyActivity);
-            } else {
-              const queueEntryEntity = await addQueueEntryToDb(
-                this.dbConnection,
-                context.activity.from.id,
-                this.activeQueue.properties.id,
-                { question, privateEntry: true }
-              );
-              this.activeQueue.enqueueQueueEntryEntity(queueEntryEntity);
-              const replyActivity = MessageFactory.text(
-                `Hello ${
-                  mention.text
-                }! You have entered the office hours queue, the instructor will get to you! You are in position ${
-                  this.activeQueue.getQueuePosition(context.activity.from.id) +
-                  1
-                }.`
-              );
-              replyActivity.entities = [mention];
-              await context.sendActivity(replyActivity);
-              await context.sendActivity(
-                `Current queue: ${this.activeQueue.entriesToString()}`
-              );
-            }
-          } else {
-            const replyActivity = MessageFactory.text(
-              `Hello ${mention.text}! Currently no office hours being held. Please check the schedule to confirm the next office hours session!`
-            );
-            replyActivity.entities = [mention];
-            await context.sendActivity(replyActivity);
-          }
-        } catch (e) {
-          console.error(
-            'Error performing command "private join office hours"\n' + e
-          );
-          throw e;
-        }
-      }
-
-      if (txt.startsWith("join office hours")) {
-        try {
-          const question: string = txt.replace("join office hours", "").trim();
-          if (this.activeQueue) {
-            if (this.activeQueue.checkQueue(context.activity.from.id)) {
-              const replyActivity = MessageFactory.text(
-                `Hello ${mention.text}! You are already in queue.`
-              );
-              replyActivity.entities = [mention];
-              await context.sendActivity(replyActivity);
-            } else {
-              const queueEntryEntity = await addQueueEntryToDb(
-                this.dbConnection,
-                context.activity.from.id,
-                this.activeQueue.properties.id,
-                { question, privateEntry: false }
-              );
-              this.activeQueue.enqueueQueueEntryEntity(queueEntryEntity);
-              const replyActivity = MessageFactory.text(
-                `Hello ${
-                  mention.text
-                }! You have entered the office hours queue, the instructor will get to you! You are in position ${
-                  this.activeQueue.getQueuePosition(context.activity.from.id) +
-                  1
-                }.`
-              );
-              replyActivity.entities = [mention];
-              await context.sendActivity(replyActivity);
-              await context.sendActivity(
-                `Current queue: ${this.activeQueue.entriesToString()}`
-              );
-            }
-          } else {
-            const replyActivity = MessageFactory.text(
-              `Hello ${mention.text}! Currently no office hours being held. Please check the schedule to confirm the next office hours session!`
-            );
-            replyActivity.entities = [mention];
-            await context.sendActivity(replyActivity);
-          }
-        } catch (e) {
-          console.error('Error performing command "join office hours"\n' + e);
           throw e;
         }
       }
