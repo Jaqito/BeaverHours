@@ -37,13 +37,13 @@ export default class QueueEntry {
     return entry;
   }
 
-  toString(): string {
+  toString(showPrivate: boolean = false): string {
     return (
       `\n\n           id: ${this.id},\n` +
       `      queueId: ${this.queueId},\n` +
       `       userId: ${this.userId},\n` +
-      `     question: ${this.question},\n` +
-      `     private:  ${this.privateEntry},\n` +
+      `     question: ${!this.privateEntry || showPrivate ? this.question : "private"},\n` +
+      `      private: ${this.privateEntry},\n` +
       `     resolved: ${this.resolved},\n` +
       `    createdAt: ${this.createdAt ?? ""},\n` +
       `    updatedAt: ${this.updatedAt ?? ""}\n`
