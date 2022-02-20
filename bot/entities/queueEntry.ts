@@ -18,6 +18,9 @@ export class QueueEntryEntity extends BaseEntity {
   @Column()
   userId: string;
 
+  @Column("bit", { default: false })
+  privateEntry: boolean = false;
+
   @Column({ nullable: true })
   question: string | null;
 
