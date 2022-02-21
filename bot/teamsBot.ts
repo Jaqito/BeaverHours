@@ -174,6 +174,13 @@ export class TeamsBot extends TeamsActivityHandler {
             throw e;
           }
         }
+        case "student complete": {
+            // can only mark a student as complete if there is a student marked as conversing
+            // only one student in a conversing state at a time
+            // iterate over queue and pass the student that is currently conversing into queue
+            // const studentToUpdate: QueueEntry = this.activeQueue.findFirstConversing();
+
+        }
       }
       if (txt.startsWith("private join office hours")) {
         try {

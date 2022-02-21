@@ -23,3 +23,9 @@ export interface QueueProperties {
   startTime?: Date;
   status?: QueueStatus;
 }
+
+export enum StudentStatus {
+    Waiting = "WAITING",
+    Conversing = "CONVERSING",
+    Resolved = "RESOLVED"
+}

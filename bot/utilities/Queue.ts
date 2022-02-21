@@ -1,5 +1,5 @@
 import QueueEntry from "./QueueEntry";
-import { QueueProperties, QueueStatus } from "./Global";
+import { QueueProperties, QueueStatus, StudentStatus } from "./Global";
 import { QueueEntity } from "../entities/queue";
 import { QueueEntryEntity } from "../entities/queueEntry";
 
@@ -79,6 +79,10 @@ export default class Queue {
 
   dequeueStudent(idToRemove: string): void {
     this.entries.splice(this.getQueuePosition(idToRemove), 1);
+  }
+
+  findFirstConversing() : QueueEntry {
+      return this.entries.find((student) => student.resolved == StudentStatus.Conversing);
   }
 
   propertiesToString(): string {
