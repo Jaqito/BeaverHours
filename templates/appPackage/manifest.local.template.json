@@ -11,16 +11,16 @@
     "termsOfUseUrl": "{{{localSettings.frontend.tabEndpoint}}}/index.html#/termsofuse"
   },
   "icons": {
-    "color": "resources/color.png",
-    "outline": "resources/outline.png"
+    "color": "resources/beaver.png",
+    "outline": "resources/beaver.png"
   },
   "name": {
     "short": "BeaverHours-local-debug",
     "full": "BeaverHours-local-debug"
   },
   "description": {
-    "short": "Short description of BeaverHours-local-debug",
-    "full": "Full description of BeaverHours-local-debug"
+    "short": "Beaver Hours is an application for organizing office hours",
+    "full": "Beaver Hours is an application that allows students and teachers to better collaborate. Using Beaver Hours teachers can organize their office hours more efficiently and make sure their students get the help they neded."
   },
   "accentColor": "#FFFFFF",
   "bots": [
