@@ -13,8 +13,14 @@ import fetchQueuesByOwner from "./api/fetchQueuesByOwner";
 import fetchQueueEntriesByQueueId from "./api/fetchQueueEntriesByQueueId";
 import updateQueueStatusInDb from "./api/updateQueueStatusInDb";
 import { QueueStatus } from "./utilities/Global";
+import updateQueueEntryResolved from "./api/updateQueueEntryResolved";
 import Queue from "./utilities/Queue";
+<<<<<<< HEAD
 import { getNamesOfTeamMembers } from "./api/getNamesOfTeamMembers";
+=======
+import QueueEntry from "./utilities/QueueEntry";
+import { StudentStatus } from "./utilities/Global";
+>>>>>>> 124cd62 (mark student complete command started, untested, setResolvedState added to QueueEntry)
 
 export interface DataInterface {
   likeCount: number;
@@ -174,12 +180,18 @@ export class TeamsBot extends TeamsActivityHandler {
             throw e;
           }
         }
-        case "student complete": {
-            // can only mark a student as complete if there is a student marked as conversing
+        case "mark student complete": {
+            // can only mark a student as complete if there is a student marked as conversing in the non-empty queue
             // only one student in a conversing state at a time
             // iterate over queue and pass the student that is currently conversing into queue
-            // const studentToUpdate: QueueEntry = this.activeQueue.findFirstConversing();
-
+            const studentToUpdate: QueueEntry = this.activeQueue.findFirstConversing();
+            if (studentToUpdate != undefined && this.activeQueue.length > 0) {
+                studentToUpdate.setResolvedState(StudentStatus.Resolved);
+                const updateResult = await updateQueueEntryResolved(this.dbConnection, studentToUpdate.id);
+                await context.sendActivity(`Student conversation resolved:${studentToUpdate.toString()}`);
+            } else {
+                await context.sendActivity("There are either no students conversing with an instructor or no students are in line.");
+            }
         }
       }
       if (txt.startsWith("private join office hours")) {
