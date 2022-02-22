@@ -185,11 +185,37 @@ export class TeamsBot extends TeamsActivityHandler {
             const studentToUpdate: QueueEntry = this.activeQueue.findFirstConversing();
             if (studentToUpdate != undefined && this.activeQueue.isNotEmpty()) {
                 studentToUpdate.setResolvedState(StudentStatus.Resolved);
-                const updateResult = await updateQueueEntryResolved(this.dbConnection, studentToUpdate.id);
+                const updateResult = await updateQueueEntryResolved(
+                    this.dbConnection, 
+                    studentToUpdate.id, 
+                    studentToUpdate.resolved
+                );
+                console.log(`Updated: ${updateResult}`);
                 await context.sendActivity(`Student conversation resolved:${studentToUpdate.toString()}`);
             } else {
                 await context.sendActivity("Unable to mark student as completed - there are either no students conversing with an instructor or no students are in line.");
             }
+            break;
+        }
+        case "get next student":{
+            const anyConversing : QueueEntry = this.activeQueue.findFirstConversing();
+            if (anyConversing != undefined) {
+                await context.sendActivity(`Have you finished helping the other student? Please resolve the conversation with the current student via 'mark student complete'. Currently needs resolving: ${anyConversing.toString()}`);
+            } else if (this.activeQueue.isEmpty()) {
+                await context.sendActivity("There are currently no students in line!");
+            } else {
+               const nextInLine = this.activeQueue.findFirstWaiting();
+               nextInLine.setResolvedState(StudentStatus.Conversing);
+               const updateResult = await updateQueueEntryResolved(
+                   this.dbConnection, 
+                   nextInLine.id,
+                   nextInLine.resolved
+                );
+               console.log(`Updated: ${updateResult}`);
+               await context.sendActivity(`Next to student to be helped:${nextInLine.toString()}`)
+                // future functionality to automatically place new student into meeting/chat with instructor
+            }
+            break;
         }
       }
       if (txt.startsWith("private join office hours")) {

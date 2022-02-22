@@ -94,6 +94,10 @@ export default class Queue {
       return this.entries.find((student) => student.resolved == StudentStatus.Conversing);
   }
 
+  findFirstWaiting() : QueueEntry {
+      return this.entries.find((student) => student.resolved == StudentStatus.Waiting);
+  }
+
   propertiesToString(): string {
     return (
       `\n\n           id: ${this.properties.id}\n` +
