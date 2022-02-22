@@ -181,16 +181,14 @@ export class TeamsBot extends TeamsActivityHandler {
           }
         }
         case "mark student complete": {
-            // can only mark a student as complete if there is a student marked as conversing in the non-empty queue
-            // only one student in a conversing state at a time
-            // iterate over queue and pass the student that is currently conversing into queue
+            // only one student at a time can be in a conversing state 
             const studentToUpdate: QueueEntry = this.activeQueue.findFirstConversing();
-            if (studentToUpdate != undefined && this.activeQueue.length > 0) {
+            if (studentToUpdate != undefined && this.activeQueue.isNotEmpty()) {
                 studentToUpdate.setResolvedState(StudentStatus.Resolved);
                 const updateResult = await updateQueueEntryResolved(this.dbConnection, studentToUpdate.id);
                 await context.sendActivity(`Student conversation resolved:${studentToUpdate.toString()}`);
             } else {
-                await context.sendActivity("There are either no students conversing with an instructor or no students are in line.");
+                await context.sendActivity("Unable to mark student as completed - there are either no students conversing with an instructor or no students are in line.");
             }
         }
       }

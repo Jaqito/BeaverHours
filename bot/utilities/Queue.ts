@@ -2,6 +2,7 @@ import QueueEntry from "./QueueEntry";
 import { QueueProperties, QueueStatus, StudentStatus } from "./Global";
 import { QueueEntity } from "../entities/queue";
 import { QueueEntryEntity } from "../entities/queueEntry";
+import { ThisMemoryScope } from "botbuilder-dialogs";
 
 interface enqueueOptions {
   privateEntry?: boolean;
@@ -43,6 +44,14 @@ export default class Queue {
 
   get length(): number {
     return this.entries.length;
+  }
+
+  isEmpty(): boolean {
+      return this.length == 0;
+  }
+
+  isNotEmpty(): boolean {
+      return this.length != 0;
   }
 
   findStudent(idToFind: string): QueueEntry {
