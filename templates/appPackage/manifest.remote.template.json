@@ -43,7 +43,11 @@
             },
             {
               "title": "join office hours",
-              "description": "Jump in queue to get help from the instructor"
+              "description": "Jump in queue to get help from the instructor. Optionally, you can add your question to the end of the command."
+            },
+            {
+              "title": "private join office hours",
+              "description": "Jump in queue to get help from the instructor but have your question hidden."
             },
             {
               "title": "leave office hours",
@@ -58,7 +62,7 @@
               "description": "Get a list of your office hours"
             },
             {
-              "title": "view queue <queueId>",
+              "title": "view queue [queueId]",
               "description": "Show the list of students in the office hour queue with the given ID, or the current office hour if no ID is provided."
             }
           ]
