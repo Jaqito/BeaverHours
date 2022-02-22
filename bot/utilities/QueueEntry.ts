@@ -24,8 +24,8 @@ export default class QueueEntry {
     this.queueId = queueId;
   }
 
-  setResolvedState(state: StudentStatus) : void {
-      this.resolved = state;
+  setResolvedState(state: StudentStatus): void {
+    this.resolved = state;
   }
 
   static fromQueueEntryEntity(queueEntryEntity: QueueEntryEntity): QueueEntry {

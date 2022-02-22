@@ -47,11 +47,11 @@ export default class Queue {
   }
 
   isEmpty(): boolean {
-      return this.length == 0;
+    return this.length == 0;
   }
 
   isNotEmpty(): boolean {
-      return this.length != 0;
+    return this.length != 0;
   }
 
   findStudent(idToFind: string): QueueEntry {
@@ -90,12 +90,16 @@ export default class Queue {
     this.entries.splice(this.getQueuePosition(idToRemove), 1);
   }
 
-  findFirstConversing() : QueueEntry {
-      return this.entries.find((student) => student.resolved == StudentStatus.Conversing);
+  findFirstConversing(): QueueEntry {
+    return this.entries.find(
+      (student) => student.resolved == StudentStatus.Conversing
+    );
   }
 
-  findFirstWaiting() : QueueEntry {
-      return this.entries.find((student) => student.resolved == StudentStatus.Waiting);
+  findFirstWaiting(): QueueEntry {
+    return this.entries.find(
+      (student) => student.resolved == StudentStatus.Waiting
+    );
   }
 
   propertiesToString(): string {

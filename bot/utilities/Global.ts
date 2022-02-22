@@ -25,7 +25,7 @@ export interface QueueProperties {
 }
 
 export enum StudentStatus {
-    Waiting = "WAITING",
-    Conversing = "CONVERSING",
-    Resolved = "RESOLVED"
+  Waiting = "WAITING",
+  Conversing = "CONVERSING",
+  Resolved = "RESOLVED",
 }

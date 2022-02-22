@@ -62,12 +62,12 @@
               "description": "Show the list of students in the queue for the current office hour"
             },
             {
-                "title": "mark student complete",
-                "description": "Mark the current student as resolved."
+              "title": "mark student complete",
+              "description": "Mark the current student as resolved."
             },
             {
-                "title": "get next student",
-                "description": "Start helping the next student in line."
+              "title": "get next student",
+              "description": "Start helping the next student in line."
             }
           ]
         }
