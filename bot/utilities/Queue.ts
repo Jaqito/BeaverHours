@@ -32,6 +32,10 @@ export default class Queue {
     this.properties.id = queueId;
   }
 
+  updateStatus(queueStatus: QueueStatus) {
+    this.properties.status = queueStatus;
+  }
+
   get length(): number {
     return this.entries.length;
   }
