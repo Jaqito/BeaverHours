@@ -1,28 +1,33 @@
 import { Connection } from "typeorm";
 import { QueueEntryEntity } from "../entities/queueEntry";
 
+interface queueEntryOptions {
+  question?: string;
+  privateEntry?: boolean;
+}
+
 export default async (
   conn: Connection,
   userId: string,
   queueId: any,
-  question?: string
+  options?: queueEntryOptions
 ) => {
-  console.log(userId, queueId);
   try {
+    const inputValues = {
+      resolved: false,
+      queue: queueId,
+      userId: userId,
+      ...options,
+    };
     const result = await conn
       .createQueryBuilder()
       .insert()
       .into(QueueEntryEntity)
-      .values({
-        resolved: false,
-        queue: queueId,
-        userId: userId,
-        question: question ? question : null, //if no question insert null into db.
-      })
+      .values(inputValues)
       .execute();
-    return result.raw[0];
+    return { ...inputValues, ...result.raw[0] };
   } catch (e) {
-    console.log("Failed to add Queue to Database", e);
+    console.log("Failed to add Queue Entry to Database", e);
     throw e;
   }
 };
