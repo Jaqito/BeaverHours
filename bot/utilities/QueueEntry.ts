@@ -37,6 +37,8 @@ export default class QueueEntry {
         return entry;
     }
 
+    
+
     toString(showPrivate: boolean = false): string {
         return (
             `       userId: ${this.userId},\n` +

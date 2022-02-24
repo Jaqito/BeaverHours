@@ -9,6 +9,7 @@ import fetchQueueEntriesByQueueId from './api/fetchQueueEntriesByQueueId';
 import updateQueueStatusInDb from './api/updateQueueStatusInDb';
 import { QueueStatus } from './utilities/Global';
 import Queue from './utilities/Queue';
+import { getNamesOfTeamMembers } from './api/getNamesOfTeamMembers';
 
 export interface DataInterface {
     likeCount: number;
@@ -136,40 +137,24 @@ export class TeamsBot extends TeamsActivityHandler {
                     queueObjects.forEach(async (queue) => await context.sendActivity(queue.propertiesToString()));
                     break;
                 }
-            }
+                case 'view queue': {
+                    try {
+                        const teamMembers = await getNamesOfTeamMembers(context);
+                        const queueMembers = this.activeQueue.getNamesInQueue(teamMembers);
 
-            if (txt.startsWith('view queue')) {
-                try {
-                    const queueIdString: string = txt.replace('view queue', '').trim();
-                    if (queueIdString === '') {
                         if (this.activeQueue) {
-                            await context.sendActivity(this.activeQueue.entriesToString());
+                            await context.sendActivity(queueMembers);
                         } else {
                             await context.sendActivity(
                                 'No office hour currently active. Did you mean "view queue (queueId)"?'
                             );
                         }
-                    } else {
-                        const queueId = Number(queueIdString);
-                        if (isNaN(queueId)) {
-                            await context.sendActivity(
-                                'Provided queue ID is not a valid integer. Please provide a valid integer for the command "view queue (queueId)".'
-                            );
-                        } else {
-                            const queueEntryEntities = await fetchQueueEntriesByQueueId(this.dbConnection, queueId);
-                            const tempQueue = new Queue({ id: queueId });
-                            queueEntryEntities.forEach((queueEntryEntity) => {
-                                tempQueue.enqueueQueueEntryEntity(queueEntryEntity);
-                            });
-                            await context.sendActivity(tempQueue.entriesToString());
-                        }
+                    } catch (e) {
+                        console.error('Error performing command "view queue"\n' + e);
+                        throw e;
                     }
-                } catch (e) {
-                    console.error('Error performing command "view queue"\n' + e);
-                    throw e;
                 }
             }
-
             if (txt.startsWith('private join office hours')) {
                 try {
                     const question: string = txt.replace('private join office hours', '').trim();
