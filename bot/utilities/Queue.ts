@@ -81,7 +81,7 @@ export default class Queue {
       queueId: this.properties.id,
       privateEntry: options.privateEntry ?? false,
       question: options.question ?? "",
-      resolved: false,
+      resolved: StudentStatus.Waiting,
     });
     this.entries.push(studentToAdd);
   }
