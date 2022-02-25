@@ -50,10 +50,6 @@ export default class Queue {
     return this.length == 0;
   }
 
-  isNotEmpty(): boolean {
-    return this.length != 0;
-  }
-
   findStudent(idToFind: string): QueueEntry {
     return this.entries.find((student) => student.userId == idToFind);
   }

@@ -184,7 +184,7 @@ export class TeamsBot extends TeamsActivityHandler {
           // only one student at a time can be in a conversing state
           const studentToUpdate: QueueEntry =
             this.activeQueue.findFirstConversing();
-          if (studentToUpdate != undefined && this.activeQueue.isNotEmpty()) {
+          if (studentToUpdate != undefined && !this.activeQueue.isEmpty()) {
             studentToUpdate.setResolvedState(StudentStatus.Resolved);
             const updateResult = await updateQueueEntryResolved(
               this.dbConnection,
