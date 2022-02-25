@@ -216,8 +216,10 @@ export class TeamsBot extends TeamsActivityHandler {
           } else {
             const nextInLine = this.activeQueue.findFirstWaiting();
             if (nextInLine == undefined) {
-                await context.sendActivity("There are no students in queue looking for help right now.");
-                break;
+              await context.sendActivity(
+                "There are no students in queue looking for help right now."
+              );
+              break;
             }
             nextInLine.setResolvedState(StudentStatus.Conversing);
             const updateResult = await updateQueueEntryResolved(
