@@ -99,7 +99,7 @@ export default class Queue {
     const entries = this.entries.map((entry, index) => {
       const member = teamMembers.find((t) => t.id === entry.userId);
       if (entry.question && !entry.privateEntry) {
-        return `${index + 1}) ${member.name}: ${entry.question}\n`;
+        return `${index + 1}) ${member.name}, Question: ${entry.question}\n`;
       } else {
         return `${index + 1}) ${member.name}\n`;
       }
