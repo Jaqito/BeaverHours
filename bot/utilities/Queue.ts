@@ -98,7 +98,11 @@ export default class Queue {
 
     const entries = this.entries.map((entry, index) => {
       const member = teamMembers.find((t) => t.id === entry.userId);
-      return `${index + 1}) ${member.givenName}\n`;
+      if (entry.question && !entry.privateEntry) {
+        return `${index + 1}) ${member.name}: ${entry.question}\n`;
+      } else {
+        return `${index + 1}) ${member.name}\n`;
+      }
     });
     let message = "\n\n";
     entries.forEach((e) => {

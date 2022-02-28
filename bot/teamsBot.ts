@@ -159,12 +159,13 @@ export class TeamsBot extends TeamsActivityHandler {
           );
           break;
         }
-        case "view queue": {
+        case "view active queue": {
           try {
             const teamMembers = await getNamesOfTeamMembers(context);
-            const queueMembers = this.activeQueue.getNamesInQueue(teamMembers);
 
             if (this.activeQueue) {
+              const queueMembers =
+                this.activeQueue.getNamesInQueue(teamMembers);
               await context.sendActivity(queueMembers);
             } else {
               await context.sendActivity(

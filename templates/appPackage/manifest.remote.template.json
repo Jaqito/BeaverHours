@@ -62,7 +62,7 @@
               "description": "Get a list of your office hours"
             },
             {
-              "title": "view queue",
+              "title": "view active queue",
               "description": "Show the list of students in the queue for the current office hour"
             }
           ]
