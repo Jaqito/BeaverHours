@@ -78,15 +78,6 @@
       "scopes": ["team", "groupchat"]
     }
   ],
-  "staticTabs": [
-    {
-      "entityId": "index",
-      "name": "Personal Tab",
-      "contentUrl": "{{{localSettings.frontend.tabEndpoint}}}/index.html#/tab",
-      "websiteUrl": "{{{localSettings.frontend.tabEndpoint}}}/index.html#/tab",
-      "scopes": ["personal"]
-    }
-  ],
   "permissions": ["identity", "messageTeamMembers"],
   "validDomains": [],
   "webApplicationInfo": {
