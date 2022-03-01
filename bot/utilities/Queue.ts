@@ -91,6 +91,27 @@ export default class Queue {
     );
   }
 
+  getNamesInQueue(teamMembers: any) {
+    if (this.entries.length == 0) {
+      return `No queue entries in queue ${this.properties.id}`;
+    }
+
+    const entries = this.entries.map((entry, index) => {
+      const member = teamMembers.find((t) => t.id === entry.userId);
+      if (entry.question && !entry.privateEntry) {
+        return `${index + 1}) ${member.name}, Question: ${entry.question}\n`;
+      } else {
+        return `${index + 1}) ${member.name}\n`;
+      }
+    });
+    let message = "\n\n";
+    entries.forEach((e) => {
+      message += e;
+    });
+
+    return message;
+  }
+
   entriesToString(showPrivate: boolean = false): string {
     if (this.entries.length == 0) {
       return `No queue entries in queue ${this.properties.id}`;

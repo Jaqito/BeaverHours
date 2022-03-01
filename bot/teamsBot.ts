@@ -14,6 +14,7 @@ import fetchQueueEntriesByQueueId from "./api/fetchQueueEntriesByQueueId";
 import updateQueueStatusInDb from "./api/updateQueueStatusInDb";
 import { QueueStatus } from "./utilities/Global";
 import Queue from "./utilities/Queue";
+import { getNamesOfTeamMembers } from "./api/getNamesOfTeamMembers";
 
 export interface DataInterface {
   likeCount: number;
@@ -70,8 +71,7 @@ export class TeamsBot extends TeamsActivityHandler {
             );
             this.activeQueue.updateId(queue.id);
             await context.sendActivity(
-              "<b>Started new Queue<b>\n\n" +
-                this.activeQueue.propertiesToString()
+              "Office hours have started! Use the bot command <b>join office hours</b> to get in line\n\n"
             );
           }
           break;
@@ -104,9 +104,6 @@ export class TeamsBot extends TeamsActivityHandler {
               );
               replyActivity.entities = [mention];
               await context.sendActivity(replyActivity);
-              await context.sendActivity(
-                `Current queue: ${this.activeQueue.entriesToString()}`
-              );
             }
           } else {
             const replyActivity = MessageFactory.text(
@@ -120,7 +117,9 @@ export class TeamsBot extends TeamsActivityHandler {
         case "get queue position": {
           if (this.activeQueue) {
             if (!this.activeQueue.checkQueue(context.activity.from.id)) {
-              await context.sendActivity("You are currently not in a queue.");
+              await context.sendActivity(
+                "You are currently not in line for office hours!"
+              );
             } else {
               const mention = {
                 mentioned: context.activity.from,
@@ -160,43 +159,22 @@ export class TeamsBot extends TeamsActivityHandler {
           );
           break;
         }
-      }
-
-      if (txt.startsWith("view queue")) {
-        try {
-          const queueIdString: string = txt.replace("view queue", "").trim();
-          if (queueIdString === "") {
+        case "view active queue": {
+          try {
+            const teamMembers = await getNamesOfTeamMembers(context);
             if (this.activeQueue) {
-              await context.sendActivity(this.activeQueue.entriesToString());
+              const queueMembers =
+                this.activeQueue.getNamesInQueue(teamMembers);
+              await context.sendActivity(queueMembers);
             } else {
-              await context.sendActivity(
-                'No office hour currently active. Did you mean "view queue (queueId)"?'
-              );
+              await context.sendActivity("No office hour currently active!");
             }
-          } else {
-            const queueId = Number(queueIdString);
-            if (isNaN(queueId)) {
-              await context.sendActivity(
-                'Provided queue ID is not a valid integer. Please provide a valid integer for the command "view queue (queueId)".'
-              );
-            } else {
-              const queueEntryEntities = await fetchQueueEntriesByQueueId(
-                this.dbConnection,
-                queueId
-              );
-              const tempQueue = new Queue({ id: queueId });
-              queueEntryEntities.forEach((queueEntryEntity) => {
-                tempQueue.enqueueQueueEntryEntity(queueEntryEntity);
-              });
-              await context.sendActivity(tempQueue.entriesToString());
-            }
+          } catch (e) {
+            console.error('Error performing command "view queue"\n' + e);
+            throw e;
           }
-        } catch (e) {
-          console.error('Error performing command "view queue"\n' + e);
-          throw e;
         }
       }
-
       if (txt.startsWith("private join office hours")) {
         try {
           const question: string = txt
@@ -227,9 +205,6 @@ export class TeamsBot extends TeamsActivityHandler {
               );
               replyActivity.entities = [mention];
               await context.sendActivity(replyActivity);
-              await context.sendActivity(
-                `Current queue: ${this.activeQueue.entriesToString()}`
-              );
             }
           } else {
             const replyActivity = MessageFactory.text(
@@ -274,9 +249,6 @@ export class TeamsBot extends TeamsActivityHandler {
               );
               replyActivity.entities = [mention];
               await context.sendActivity(replyActivity);
-              await context.sendActivity(
-                `Current queue: ${this.activeQueue.entriesToString()}`
-              );
             }
           } else {
             const replyActivity = MessageFactory.text(
