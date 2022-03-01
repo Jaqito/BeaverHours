@@ -162,15 +162,12 @@ export class TeamsBot extends TeamsActivityHandler {
         case "view active queue": {
           try {
             const teamMembers = await getNamesOfTeamMembers(context);
-
             if (this.activeQueue) {
               const queueMembers =
                 this.activeQueue.getNamesInQueue(teamMembers);
               await context.sendActivity(queueMembers);
             } else {
-              await context.sendActivity(
-                'No office hour currently active. Did you mean "view queue (queueId)"?'
-              );
+              await context.sendActivity("No office hour currently active!");
             }
           } catch (e) {
             console.error('Error performing command "view queue"\n' + e);
