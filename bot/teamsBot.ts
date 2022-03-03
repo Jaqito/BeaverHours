@@ -241,13 +241,16 @@ export class TeamsBot extends TeamsActivityHandler {
             );
 
             // tag student to inform it is their turn
-            const member = await TeamsInfo.getMember(context, nextInLine.userId);
+            const member = await TeamsInfo.getMember(
+              context,
+              nextInLine.userId
+            );
             const mention_student = {
-                mentioned: member,
-                text: `<at>${new TextEncoder().encode(member.name)}</at>`
+              mentioned: member,
+              text: `<at>${new TextEncoder().encode(member.name)}</at>`,
             } as Mention;
             const replyActivity = MessageFactory.text(
-                `Hello ${mention_student.text}! It is your turn to get help during this office hours. Please chat or call ${mention.text} to get the conversation started.`
+              `Hello ${mention_student.text}! It is your turn to get help during this office hours. Please chat or call ${mention.text} to get the conversation started.`
             );
             replyActivity.entities = [mention_student, mention];
             await context.sendActivity(replyActivity);
@@ -349,6 +352,4 @@ export class TeamsBot extends TeamsActivityHandler {
   }
 }
 
-export const sendNewMessage = async () => {
-
-}
+export const sendNewMessage = async () => {};
