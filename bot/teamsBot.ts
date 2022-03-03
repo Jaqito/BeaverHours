@@ -5,6 +5,8 @@ import {
   TurnContext,
   MessageFactory,
   ConversationParameters,
+  TeamsInfo,
+  Mention,
 } from "botbuilder";
 import * as querystring from "querystring";
 import { Connection } from "typeorm";
@@ -19,8 +21,6 @@ import Queue from "./utilities/Queue";
 import { getNamesOfTeamMembers } from "./api/getNamesOfTeamMembers";
 import QueueEntry from "./utilities/QueueEntry";
 import { StudentStatus } from "./utilities/Global";
-import fetch from "node-fetch";
-import { getAccessToken } from "./utilities/Auth";
 import dotenv from "dotenv";
 import path from "path";
 if (process.env.NODE_ENV !== "production") {
@@ -228,6 +228,7 @@ export class TeamsBot extends TeamsActivityHandler {
               );
               break;
             }
+            // mark the next student
             nextInLine.setResolvedState(StudentStatus.Conversing);
             const updateResult = await updateQueueEntryResolved(
               this.dbConnection,
@@ -238,52 +239,18 @@ export class TeamsBot extends TeamsActivityHandler {
             await context.sendActivity(
               `Next student to be helped:${nextInLine.toString()}`
             );
-            // future functionality to automatically place new student into meeting/chat with instructor
-            var req = {
-              "bot": {
-                "id": context.activity.channelData.tenant.id,
-                "name": context.activity.recipient.name
-              },
-              "isGroup": true,
-              "members": [
-                {
-                    "id": nextInLine.userId
-                }
-              ],
-              "channelData": {
-                "tenant": {
-                    "id": context.activity.conversation.tenantId
-                }
-              }
-            } as ConversationParameters;
-            try {
-                var access_token = await getAccessToken();
-                console.log(`Context: ${JSON.stringify(context.activity)}`);
-                // console.log(`adapter: ${JSON.stringify(context.adapter)}`);
-                // console.log(`Access Token: ${access_token}`);
-                console.log(`Requesting ${context.activity.serviceUrl + "v3/conversations"}`);
-                var response = await fetch(`${context.activity.serviceUrl}v3/conversations`,
-                    {
-                        method: 'POST',
-                        headers: {
-                            'Authorization': `Bearer ${access_token}`
-                        },
-                        body: JSON.stringify(req)
-                    }
-                );
-                if (!response.ok) {
-                    console.log("Error when requesting new conversation");
-                    console.log(await response.json());
-                } else if (response.status >= 400) {
-                    console.log(`HTTP Request Error ${response.status}: ${response.statusText}`);
-                    console.log(await response.json());
-                } else {
-                    console.log(`HTTP Request Success ${response.status}: ${response.statusText}`);
-                    console.log(await response.json());
-                }
-            } catch (error) {
-                console.log(`Fetch error - ${error}`);
-            }
+
+            // tag student to inform it is their turn
+            const member = await TeamsInfo.getMember(context, nextInLine.userId);
+            const mention_student = {
+                mentioned: member,
+                text: `<at>${new TextEncoder().encode(member.name)}</at>`
+            } as Mention;
+            const replyActivity = MessageFactory.text(
+                `Hello ${mention_student.text}! It is your turn to get help during this office hours. Please chat or call ${mention.text} to get the conversation started.`
+            );
+            replyActivity.entities = [mention_student, mention];
+            await context.sendActivity(replyActivity);
           }
           break;
         }
