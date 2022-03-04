@@ -13,8 +13,11 @@ import fetchQueuesByOwner from "./api/fetchQueuesByOwner";
 import fetchQueueEntriesByQueueId from "./api/fetchQueueEntriesByQueueId";
 import updateQueueStatusInDb from "./api/updateQueueStatusInDb";
 import { QueueStatus } from "./utilities/Global";
+import updateQueueEntryResolved from "./api/updateQueueEntryResolved";
 import Queue from "./utilities/Queue";
 import { getNamesOfTeamMembers } from "./api/getNamesOfTeamMembers";
+import QueueEntry from "./utilities/QueueEntry";
+import { StudentStatus } from "./utilities/Global";
 
 export interface DataInterface {
   likeCount: number;
@@ -173,6 +176,62 @@ export class TeamsBot extends TeamsActivityHandler {
             console.error('Error performing command "view queue"\n' + e);
             throw e;
           }
+          break;
+        }
+        case "mark student complete": {
+          // only one student at a time can be in a conversing state
+          const studentToUpdate: QueueEntry =
+            this.activeQueue.findFirstConversing();
+          if (studentToUpdate != undefined && !this.activeQueue.isEmpty()) {
+            studentToUpdate.setResolvedState(StudentStatus.Resolved);
+            const updateResult = await updateQueueEntryResolved(
+              this.dbConnection,
+              studentToUpdate.id,
+              studentToUpdate.resolved
+            );
+            console.log(`Updated: ${updateResult}`);
+            await context.sendActivity(
+              `Student conversation resolved:${studentToUpdate.toString()}`
+            );
+          } else {
+            await context.sendActivity(
+              "Unable to mark student as completed - there are either no students conversing with an instructor or no students are in line."
+            );
+          }
+          break;
+        }
+        case "get next student": {
+          const anyConversing: QueueEntry =
+            this.activeQueue.findFirstConversing();
+          if (anyConversing != undefined) {
+            await context.sendActivity(
+              `Have you finished helping the other student? Please resolve the conversation with the current student via 'mark student complete'. Currently needs resolving: ${anyConversing.toString()}`
+            );
+          } else if (this.activeQueue.isEmpty()) {
+            await context.sendActivity(
+              "There are currently no students in line!"
+            );
+          } else {
+            const nextInLine = this.activeQueue.findFirstWaiting();
+            if (nextInLine == undefined) {
+              await context.sendActivity(
+                "There are no students in queue looking for help right now."
+              );
+              break;
+            }
+            nextInLine.setResolvedState(StudentStatus.Conversing);
+            const updateResult = await updateQueueEntryResolved(
+              this.dbConnection,
+              nextInLine.id,
+              nextInLine.resolved
+            );
+            console.log(`Updated: ${updateResult}`);
+            await context.sendActivity(
+              `Next student to be helped:${nextInLine.toString()}`
+            );
+            // future functionality to automatically place new student into meeting/chat with instructor
+          }
+          break;
         }
       }
       if (txt.startsWith("private join office hours")) {

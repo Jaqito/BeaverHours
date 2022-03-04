@@ -1,7 +1,8 @@
 import QueueEntry from "./QueueEntry";
-import { QueueProperties, QueueStatus } from "./Global";
+import { QueueProperties, QueueStatus, StudentStatus } from "./Global";
 import { QueueEntity } from "../entities/queue";
 import { QueueEntryEntity } from "../entities/queueEntry";
+import { ThisMemoryScope } from "botbuilder-dialogs";
 
 interface enqueueOptions {
   privateEntry?: boolean;
@@ -45,6 +46,10 @@ export default class Queue {
     return this.entries.length;
   }
 
+  isEmpty(): boolean {
+    return this.length == 0;
+  }
+
   findStudent(idToFind: string): QueueEntry {
     return this.entries.find((student) => student.userId == idToFind);
   }
@@ -72,13 +77,25 @@ export default class Queue {
       queueId: this.properties.id,
       privateEntry: options.privateEntry ?? false,
       question: options.question ?? "",
-      resolved: false,
+      resolved: StudentStatus.Waiting,
     });
     this.entries.push(studentToAdd);
   }
 
   dequeueStudent(idToRemove: string): void {
     this.entries.splice(this.getQueuePosition(idToRemove), 1);
+  }
+
+  findFirstConversing(): QueueEntry {
+    return this.entries.find(
+      (student) => student.resolved == StudentStatus.Conversing
+    );
+  }
+
+  findFirstWaiting(): QueueEntry {
+    return this.entries.find(
+      (student) => student.resolved == StudentStatus.Waiting
+    );
   }
 
   propertiesToString(): string {

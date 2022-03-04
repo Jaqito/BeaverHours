@@ -1,4 +1,5 @@
 import { QueueEntryEntity } from "../entities/queueEntry";
+import { StudentStatus } from "./Global";
 
 export default class QueueEntry {
   id: number;
@@ -6,7 +7,7 @@ export default class QueueEntry {
   queueId: number;
   privateEntry: boolean;
   question: string;
-  resolved: boolean;
+  resolved: StudentStatus;
   createdAt: Date;
   updatedAt: Date;
 
@@ -16,11 +17,15 @@ export default class QueueEntry {
     this.queueId = queueId;
     this.privateEntry = privateEntry;
     this.question = question;
-    this.resolved = resolved;
+    this.resolved = StudentStatus.Waiting;
   }
 
   setQueueId(queueId: number): void {
     this.queueId = queueId;
+  }
+
+  setResolvedState(state: StudentStatus): void {
+    this.resolved = state;
   }
 
   static fromQueueEntryEntity(queueEntryEntity: QueueEntryEntity): QueueEntry {

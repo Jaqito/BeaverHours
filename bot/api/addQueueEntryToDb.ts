@@ -1,5 +1,6 @@
 import { Connection } from "typeorm";
 import { QueueEntryEntity } from "../entities/queueEntry";
+import { StudentStatus } from "../utilities/Global";
 
 interface queueEntryOptions {
   question?: string;
@@ -14,7 +15,7 @@ export default async (
 ) => {
   try {
     const inputValues = {
-      resolved: false,
+      resolved: StudentStatus.Waiting,
       queue: queueId,
       userId: userId,
       ...options,

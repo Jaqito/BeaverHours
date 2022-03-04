@@ -8,6 +8,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
+import { StudentStatus } from "../utilities/Global";
 import { QueueEntity } from "./queue";
 
 @Entity("queueEntry")
@@ -25,7 +26,7 @@ export class QueueEntryEntity extends BaseEntity {
   question: string | null;
 
   @Column()
-  resolved: boolean;
+  resolved: StudentStatus;
 
   @CreateDateColumn()
   createdAt: Date = new Date();
