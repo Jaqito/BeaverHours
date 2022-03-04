@@ -4,6 +4,9 @@ import {
   TeamsActivityHandler,
   TurnContext,
   MessageFactory,
+  ConversationParameters,
+  TeamsInfo,
+  Mention,
 } from "botbuilder";
 import * as querystring from "querystring";
 import { Connection } from "typeorm";
@@ -18,6 +21,12 @@ import Queue from "./utilities/Queue";
 import { getNamesOfTeamMembers } from "./api/getNamesOfTeamMembers";
 import QueueEntry from "./utilities/QueueEntry";
 import { StudentStatus } from "./utilities/Global";
+import dotenv from "dotenv";
+import path from "path";
+if (process.env.NODE_ENV !== "production") {
+  const ENV_FILE = path.join(__dirname, ".env.teamsfx.local");
+  dotenv.config({ path: ENV_FILE });
+}
 
 export interface DataInterface {
   likeCount: number;
@@ -219,6 +228,7 @@ export class TeamsBot extends TeamsActivityHandler {
               );
               break;
             }
+            // mark the next student
             nextInLine.setResolvedState(StudentStatus.Conversing);
             const updateResult = await updateQueueEntryResolved(
               this.dbConnection,
@@ -226,10 +236,24 @@ export class TeamsBot extends TeamsActivityHandler {
               nextInLine.resolved
             );
             console.log(`Updated: ${updateResult}`);
-            await context.sendActivity(
-              `Next student to be helped:${nextInLine.toString()}`
+
+            // tag student to inform it is their turn
+            const member = await TeamsInfo.getMember(
+              context,
+              nextInLine.userId
             );
-            // future functionality to automatically place new student into meeting/chat with instructor
+            await context.sendActivity(
+              `Next student to be helped is ${member.name}`
+            );
+            const mention_student = {
+              mentioned: member,
+              text: `<at>${new TextEncoder().encode(member.name)}</at>`,
+            } as Mention;
+            const replyActivity = MessageFactory.text(
+              `Hello ${mention_student.text}! It is your turn to get help during this office hours. Please chat or call ${mention.text} to get the conversation started.`
+            );
+            replyActivity.entities = [mention_student, mention];
+            await context.sendActivity(replyActivity);
           }
           break;
         }
@@ -327,3 +351,5 @@ export class TeamsBot extends TeamsActivityHandler {
     });
   }
 }
+
+export const sendNewMessage = async () => {};
