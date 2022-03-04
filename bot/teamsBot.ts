@@ -15,12 +15,9 @@ import updateQueueStatusInDb from "./api/updateQueueStatusInDb";
 import { QueueStatus } from "./utilities/Global";
 import updateQueueEntryResolved from "./api/updateQueueEntryResolved";
 import Queue from "./utilities/Queue";
-<<<<<<< HEAD
 import { getNamesOfTeamMembers } from "./api/getNamesOfTeamMembers";
-=======
 import QueueEntry from "./utilities/QueueEntry";
 import { StudentStatus } from "./utilities/Global";
->>>>>>> 124cd62 (mark student complete command started, untested, setResolvedState added to QueueEntry)
 
 export interface DataInterface {
   likeCount: number;
@@ -179,6 +176,7 @@ export class TeamsBot extends TeamsActivityHandler {
             console.error('Error performing command "view queue"\n' + e);
             throw e;
           }
+          break;
         }
         case "mark student complete": {
           // only one student at a time can be in a conversing state
