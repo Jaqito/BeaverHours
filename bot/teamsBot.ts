@@ -236,14 +236,18 @@ export class TeamsBot extends TeamsActivityHandler {
               nextInLine.resolved
             );
             console.log(`Updated: ${updateResult}`);
-            await context.sendActivity(
-              `Next student to be helped:${nextInLine.toString()}`
-            );
+            // await context.sendActivity(
+            //   `Next student to be helped:${nextInLine.toString()}`
+            // );
 
             // tag student to inform it is their turn
             const member = await TeamsInfo.getMember(
               context,
               nextInLine.userId
+            );
+            console.log(`member: ${JSON.stringify(member)}`);
+            await context.sendActivity(
+              `Next student to be helped is ${member.name}`
             );
             const mention_student = {
               mentioned: member,
