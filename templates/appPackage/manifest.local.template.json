@@ -75,7 +75,6 @@
     }
   ],
 
-
   "permissions": ["identity", "messageTeamMembers"],
   "validDomains": [],
   "webApplicationInfo": {
