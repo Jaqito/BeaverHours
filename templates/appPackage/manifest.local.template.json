@@ -75,13 +75,7 @@
     }
   ],
 
-  "configurableTabs": [
-    {
-      "configurationUrl": "{{{localSettings.frontend.tabEndpoint}}}/index.html#/config",
-      "canUpdateConfiguration": true,
-      "scopes": ["team", "groupchat"]
-    }
-  ],
+
   "permissions": ["identity", "messageTeamMembers"],
   "validDomains": [],
   "webApplicationInfo": {
