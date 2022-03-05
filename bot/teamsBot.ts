@@ -197,8 +197,9 @@ export class TeamsBot extends TeamsActivityHandler {
               context,
               studentToUpdate.userId
             );
+            this.activeQueue.dequeueStudent(context.activity.from.id);
             await context.sendActivity(
-              `Conversation with ${member.name} is finished!`
+              `Conversation with ${member.name} is finished and he/she is removed from the queue.`
             );
           } else {
             await context.sendActivity(
