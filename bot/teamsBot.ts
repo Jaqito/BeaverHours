@@ -21,12 +21,6 @@ import Queue from "./utilities/Queue";
 import { getNamesOfTeamMembers } from "./api/getNamesOfTeamMembers";
 import QueueEntry from "./utilities/QueueEntry";
 import { StudentStatus } from "./utilities/Global";
-import dotenv from "dotenv";
-import path from "path";
-if (process.env.NODE_ENV !== "production") {
-  const ENV_FILE = path.join(__dirname, ".env.teamsfx.local");
-  dotenv.config({ path: ENV_FILE });
-}
 
 export interface DataInterface {
   likeCount: number;
@@ -198,9 +192,13 @@ export class TeamsBot extends TeamsActivityHandler {
               studentToUpdate.id,
               studentToUpdate.resolved
             );
-            console.log(`Updated: ${updateResult}`);
+
+            const member = await TeamsInfo.getMember(
+              context,
+              studentToUpdate.userId
+            );
             await context.sendActivity(
-              `Student conversation resolved:${studentToUpdate.toString()}`
+              `Conversation with ${member.name} is finished!`
             );
           } else {
             await context.sendActivity(
