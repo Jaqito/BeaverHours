@@ -1,90 +1,90 @@
 {
-    "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.11/MicrosoftTeams.schema.json",
-    "manifestVersion": "1.11",
-    "version": "1.0.0",
-    "id": "{{state.fx-resource-appstudio.teamsAppId}}",
-    "packageName": "com.microsoft.teams.extension",
-    "developer": {
-        "name": "Teams App, Inc.",
-        "websiteUrl": "{{{state.fx-resource-frontend-hosting.endpoint}}}",
-        "privacyUrl": "{{{state.fx-resource-frontend-hosting.endpoint}}}/index.html#/privacy",
-        "termsOfUseUrl": "{{{state.fx-resource-frontend-hosting.endpoint}}}/index.html#/termsofuse"
-    },
-    "icons": {
-        "color": "resources/beaver.png",
-        "outline": "resources/beaver.png"
-    },
-    "name": {
-        "short": "{{config.manifest.appName.short}}",
-        "full": "{{config.manifest.appName.full}}"
-    },
-    "description": {
-        "short": "Beaver Hours is an application for organizing office hours",
-        "full": "Beaver Hours is an application that allows students and teachers collaborate better. Using Beaver Hours teachers can organize their office hours more efficiently and make sure their students get the help they need."
-    },
-    "accentColor": "#FFFFFF",
-    "bots": [
+  "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.11/MicrosoftTeams.schema.json",
+  "manifestVersion": "1.11",
+  "version": "1.0.0",
+  "id": "{{state.fx-resource-appstudio.teamsAppId}}",
+  "packageName": "com.microsoft.teams.extension",
+  "developer": {
+    "name": "Teams App, Inc.",
+    "websiteUrl": "{{{state.fx-resource-frontend-hosting.endpoint}}}",
+    "privacyUrl": "{{{state.fx-resource-frontend-hosting.endpoint}}}/index.html#/privacy",
+    "termsOfUseUrl": "{{{state.fx-resource-frontend-hosting.endpoint}}}/index.html#/termsofuse"
+  },
+  "icons": {
+    "color": "resources/beaver.png",
+    "outline": "resources/beaver.png"
+  },
+  "name": {
+    "short": "{{config.manifest.appName.short}}",
+    "full": "{{config.manifest.appName.full}}"
+  },
+  "description": {
+    "short": "Beaver Hours is an application for organizing office hours",
+    "full": "Beaver Hours is an application that allows students and teachers collaborate better. Using Beaver Hours teachers can organize their office hours more efficiently and make sure their students get the help they need."
+  },
+  "accentColor": "#FFFFFF",
+  "bots": [
+    {
+      "botId": "{{state.fx-resource-bot.botId}}",
+      "scopes": ["personal", "team", "groupchat"],
+      "supportsFiles": false,
+      "isNotificationOnly": false,
+      "commandLists": [
         {
-            "botId": "{{state.fx-resource-bot.botId}}",
-            "scopes": ["personal", "team", "groupchat"],
-            "supportsFiles": false,
-            "isNotificationOnly": false,
-            "commandLists": [
-                {
-                    "scopes": ["personal", "team", "groupchat"],
-                    "commands": [
-                        {
-                            "title": "start office hour",
-                            "description": "Start a new office hour queue"
-                        },
-                        {
-                            "title": "end office hour",
-                            "description": "End the active office hour queue"
-                        },
-                        {
-                            "title": "join office hours",
-                            "description": "Jump in queue to get help from the instructor. Optionally, you can add your question to the end of the command."
-                        },
-                        {
-                            "title": "private join office hours",
-                            "description": "Jump in queue to get help from the instructor but have your question hidden."
-                        },
-                        {
-                            "title": "leave office hours",
-                            "description": "Leave the office hours queue"
-                        },
-                        {
-                            "title": "get queue position",
-                            "description": "Find out where you are in line"
-                        },
-                        {
-                            "title": "view active queue",
-                            "description": "Show the list of students in the queue for the current office hour"
-                        },
-                        {
-                            "title": "mark student complete",
-                            "description": "Mark the current student as resolved."
-                        },
-                        {
-                            "title": "get next student",
-                            "description": "Start helping the next student in line."
-                        }
-                    ]
-                }
-            ]
+          "scopes": ["personal", "team", "groupchat"],
+          "commands": [
+            {
+              "title": "start office hour",
+              "description": "Start a new office hour queue"
+            },
+            {
+              "title": "end office hour",
+              "description": "End the active office hour queue"
+            },
+            {
+              "title": "join office hours",
+              "description": "Jump in queue to get help from the instructor. Optionally, you can add your question to the end of the command."
+            },
+            {
+              "title": "private join office hours",
+              "description": "Jump in queue to get help from the instructor but have your question hidden."
+            },
+            {
+              "title": "leave office hours",
+              "description": "Leave the office hours queue"
+            },
+            {
+              "title": "get queue position",
+              "description": "Find out where you are in line"
+            },
+            {
+              "title": "view active queue",
+              "description": "Show the list of students in the queue for the current office hour"
+            },
+            {
+              "title": "mark student complete",
+              "description": "Mark the current student as resolved."
+            },
+            {
+              "title": "get next student",
+              "description": "Start helping the next student in line."
+            }
+          ]
         }
-    ],
-    "configurableTabs": [
-        {
-            "configurationUrl": "{{{state.fx-resource-frontend-hosting.endpoint}}}/index.html#/config",
-            "canUpdateConfiguration": true,
-            "scopes": ["team", "groupchat"]
-        }
-    ],
-    "permissions": ["identity", "messageTeamMembers"],
-    "validDomains": [],
-    "webApplicationInfo": {
-        "id": "{{state.fx-resource-aad-app-for-teams.clientId}}",
-        "resource": "{{{state.fx-resource-aad-app-for-teams.applicationIdUris}}}"
+      ]
     }
+  ],
+  "configurableTabs": [
+    {
+      "configurationUrl": "{{{state.fx-resource-frontend-hosting.endpoint}}}/index.html#/config",
+      "canUpdateConfiguration": true,
+      "scopes": ["team", "groupchat"]
+    }
+  ],
+  "permissions": ["identity", "messageTeamMembers"],
+  "validDomains": [],
+  "webApplicationInfo": {
+    "id": "{{state.fx-resource-aad-app-for-teams.clientId}}",
+    "resource": "{{{state.fx-resource-aad-app-for-teams.applicationIdUris}}}"
+  }
 }
